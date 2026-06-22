@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<DTS:ConnectionManager xmlns:DTS="www.microsoft.com/SqlServer/Dts"
+  DTS:ObjectName="DESKTOP-TVVRCUR_SQLEXPRESS.FootballScouting_Staging"
+  DTS:DTSID="{286E3C80-51ED-4B50-9C64-31A3614A916B}"
+  DTS:CreationName="OLEDB">
+  <DTS:ObjectData>
+    <DTS:ConnectionManager
+      DTS:ConnectRetryCount="1"
+      DTS:ConnectRetryInterval="5"
+      DTS:ConnectionString="Data Source=DESKTOP-TVVRCUR\SQLEXPRESS;Initial Catalog=FootballScouting_Staging;Provider=SQLNCLI11.1;Integrated Security=SSPI;Application Name=SSIS-KT3-{286E3C80-51ED-4B50-9C64-31A3614A916B}DESKTOP-TVVRCUR\SQLEXPRESS.FootballScouting_Staging;Auto Translate=False;" />
+  </DTS:ObjectData>
+</DTS:ConnectionManager>

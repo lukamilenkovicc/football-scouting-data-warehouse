@@ -1,0 +1,1969 @@
+<?xml version="1.0"?>
+<DTS:Executable xmlns:DTS="www.microsoft.com/SqlServer/Dts"
+  DTS:refId="Package"
+  DTS:CreationDate="6/13/2026 9:38:48 PM"
+  DTS:CreationName="Microsoft.Package"
+  DTS:CreatorComputerName="DESKTOP-TVVRCUR"
+  DTS:CreatorName="DESKTOP-TVVRCUR\Korisnik"
+  DTS:DTSID="{531C6C36-0309-4439-B57E-F6CA5C6B69D0}"
+  DTS:ExecutableType="Microsoft.Package"
+  DTS:LastModifiedProductVersion="17.0.1016.0"
+  DTS:LocaleID="1033"
+  DTS:ObjectName="Package1"
+  DTS:PackageType="5"
+  DTS:VersionBuild="17"
+  DTS:VersionGUID="{397B818F-4914-41CE-BBEE-83F4AC73478E}">
+  <DTS:Property
+    DTS:Name="PackageFormatVersion">8</DTS:Property>
+  <DTS:Variables />
+  <DTS:Executables>
+    <DTS:Executable
+      DTS:refId="Package\DROP and CREATE Fact_Appearances"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:Description="Execute SQL Task"
+      DTS:DTSID="{8F44B2DD-F0B9-442C-BA48-ADD5C7228C9B}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="DROP and CREATE Fact_Appearances"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2025; © 2025 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{48255525-DF27-4D39-9F96-F9E61C00D4D5}"
+          SQLTask:SqlStatementSource="&#xA;IF EXISTS (&#xA;&#x9;SELECT * FROM sys.key_constraints&#xA;&#x9;WHERE name = 'UQ_Fact_Appearances' AND parent_object_id = OBJECT_ID('dbo.Fact_Appearances')&#xA;&#x9;)&#xA;BEGIN&#xA;&#x9;ALTER TABLE [dbo].[Fact_Appearances] DROP CONSTRAINT [UQ_Fact_Appearances]&#xA;END&#xA;&#xA;&#xA;&#xA;&#xA;IF EXISTS&#xA;&#x9;(SELECT *&#xA;&#x9;FROM sysobjects&#xA;&#x9;WHERE id = OBJECT_ID(N'Fact_Appearances')) -- Menjamo naziv tabele&#xA;&#xA;BEGIN&#xA;&#x9;-- KOMANDA ZA DROP TABLE&#xA;&#x9;IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Fact_Appearances]') AND type in (N'U'))&#xA;&#x9;DROP TABLE [dbo].[Fact_Appearances]&#xA;&#xA;&#xA;&#x9;-- KOMANDA ZA CREATE TABLE&#xA;CREATE TABLE [dbo].[Fact_Appearances](&#xA;&#x9;[appearance_id] [int] IDENTITY(1,1) NOT NULL,&#xA;&#x9;[date_sid] [int] NOT NULL,&#xA;&#x9;[player_sid] [int] NOT NULL,&#xA;&#x9;[club_sid] [int] NOT NULL,&#xA;&#x9;[competition_sid] [int] NOT NULL,&#xA;&#x9;[goals] [int] NULL,&#xA;&#x9;[assists] [int] NULL,&#xA;&#x9;[minutes_played] [int] NULL,&#xA; CONSTRAINT [PK__Fact_App__4BCC8ECD64F0B8DC] PRIMARY KEY CLUSTERED &#xA;(&#xA;&#x9;[appearance_id] ASC&#xA;)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],&#xA; CONSTRAINT [UQ_Fact_Appearances] UNIQUE NONCLUSTERED &#xA;(&#xA;&#x9;[date_sid] ASC,&#xA;&#x9;[player_sid] ASC,&#xA;&#x9;[club_sid] ASC,&#xA;&#x9;[competition_sid] ASC&#xA;)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]&#xA;) ON [PRIMARY]&#xA;&#xA;&#xA;ALTER TABLE [dbo].[Fact_Appearances] ADD  CONSTRAINT [DF__Fact_Appe__goals__3B75D760]  DEFAULT ((0)) FOR [goals]&#xA;&#xA;ALTER TABLE [dbo].[Fact_Appearances] ADD  CONSTRAINT [DF__Fact_Appe__assis__3C69FB99]  DEFAULT ((0)) FOR [assists]&#xA;&#xA;&#xA;ALTER TABLE [dbo].[Fact_Appearances] ADD  CONSTRAINT [DF__Fact_Appe__minut__3D5E1FD2]  DEFAULT ((0)) FOR [minutes_played]&#xA;&#xA;&#xA;ALTER TABLE [dbo].[Fact_Appearances]  WITH CHECK ADD  CONSTRAINT [FK_Fact_Appearances_Dim_Competition] FOREIGN KEY([competition_sid])&#xA;REFERENCES [dbo].[Dim_Competition] ([competition_sid])&#xA;&#xA;&#xA;ALTER TABLE [dbo].[Fact_Appearances] CHECK CONSTRAINT [FK_Fact_Appearances_Dim_Competition]&#xA;&#xA;ALTER TABLE [dbo].[Fact_Appearances]  WITH CHECK ADD  CONSTRAINT [FK_Fact_Appearances_Dim_Date] FOREIGN KEY([date_sid])&#xA;REFERENCES [dbo].[Dim_Date] ([date_sid])&#xA;&#xA;&#xA;ALTER TABLE [dbo].[Fact_Appearances] CHECK CONSTRAINT [FK_Fact_Appearances_Dim_Date]&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;END&#xA;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\ETL Fact_Appearances"
+      DTS:CreationName="Microsoft.Pipeline"
+      DTS:Description="Data Flow Task"
+      DTS:DTSID="{8D3F122C-9768-43C5-8EAF-7045F1BE158F}"
+      DTS:ExecutableType="Microsoft.Pipeline"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="ETL Fact_Appearances"
+      DTS:TaskContact="Performs high-performance data extraction, transformation and loading;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <pipeline
+          version="1">
+          <components>
+            <component
+              refId="Package\ETL Fact_Appearances\CALCULATE date"
+              componentClassID="Microsoft.DerivedColumn"
+              contactInfo="Derived Column;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;0"
+              description="Creates new column values by applying expressions to transformation input columns. Create new columns or overwrite existing ones. For example, concatenate the values from the 'first name' and 'last name' column to make a 'full name' column."
+              name="CALCULATE date"
+              usesDispositions="true">
+              <inputs>
+                <input
+                  refId="Package\ETL Fact_Appearances\CALCULATE date.Inputs[Derived Column Input]"
+                  description="Input to the Derived Column Transformation"
+                  name="Derived Column Input">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\ETL Fact_Appearances\CALCULATE date.Inputs[Derived Column Input].Columns[Copy of date]"
+                      cachedDataType="dbDate"
+                      cachedName="Copy of date"
+                      lineageId="Package\ETL Fact_Appearances\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of date]" />
+                  </inputColumns>
+                  <externalMetadataColumns />
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\ETL Fact_Appearances\CALCULATE date.Outputs[Derived Column Output]"
+                  description="Default Output of the Derived Column Transformation"
+                  exclusionGroup="1"
+                  name="Derived Column Output"
+                  synchronousInputId="Package\ETL Fact_Appearances\CALCULATE date.Inputs[Derived Column Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\ETL Fact_Appearances\CALCULATE date.Outputs[Derived Column Output].Columns[date_sid]"
+                      dataType="i4"
+                      errorOrTruncationOperation="Computation"
+                      errorRowDisposition="FailComponent"
+                      lineageId="Package\ETL Fact_Appearances\CALCULATE date.Outputs[Derived Column Output].Columns[date_sid]"
+                      name="date_sid"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.String"
+                          description="Derived Column Expression"
+                          name="Expression">10000 * [YEAR](#{Package\ETL Fact_Appearances\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of date]}) + 100 * [MONTH](#{Package\ETL Fact_Appearances\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of date]}) + [DAY](#{Package\ETL Fact_Appearances\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of date]})</property>
+                        <property
+                          containsID="true"
+                          dataType="System.String"
+                          description="Derived Column Friendly Expression"
+                          expressionType="Notify"
+                          name="FriendlyExpression">10000 * YEAR([Copy of date]) + 100 * MONTH([Copy of date]) + DAY([Copy of date])</property>
+                      </properties>
+                    </outputColumn>
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+                <output
+                  refId="Package\ETL Fact_Appearances\CALCULATE date.Outputs[Derived Column Error Output]"
+                  description="Error Output of the Derived Column Transformation"
+                  exclusionGroup="1"
+                  isErrorOut="true"
+                  name="Derived Column Error Output"
+                  synchronousInputId="Package\ETL Fact_Appearances\CALCULATE date.Inputs[Derived Column Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\ETL Fact_Appearances\CALCULATE date.Outputs[Derived Column Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\ETL Fact_Appearances\CALCULATE date.Outputs[Derived Column Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\ETL Fact_Appearances\CALCULATE date.Outputs[Derived Column Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\ETL Fact_Appearances\CALCULATE date.Outputs[Derived Column Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\ETL Fact_Appearances\Data Conversion"
+              componentClassID="Microsoft.DataConvert"
+              contactInfo="Data Conversion;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;0"
+              description="Data Conversion"
+              name="Data Conversion"
+              usesDispositions="true">
+              <inputs>
+                <input
+                  refId="Package\ETL Fact_Appearances\Data Conversion.Inputs[Data Conversion Input]"
+                  name="Data Conversion Input">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\ETL Fact_Appearances\Data Conversion.Inputs[Data Conversion Input].Columns[player_id]"
+                      cachedDataType="wstr"
+                      cachedLength="50"
+                      cachedName="player_id"
+                      lineageId="Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Output].Columns[player_id]" />
+                    <inputColumn
+                      refId="Package\ETL Fact_Appearances\Data Conversion.Inputs[Data Conversion Input].Columns[player_club_id]"
+                      cachedDataType="wstr"
+                      cachedLength="50"
+                      cachedName="player_club_id"
+                      lineageId="Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Output].Columns[player_club_id]" />
+                    <inputColumn
+                      refId="Package\ETL Fact_Appearances\Data Conversion.Inputs[Data Conversion Input].Columns[date]"
+                      cachedDataType="wstr"
+                      cachedLength="50"
+                      cachedName="date"
+                      lineageId="Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Output].Columns[date]" />
+                    <inputColumn
+                      refId="Package\ETL Fact_Appearances\Data Conversion.Inputs[Data Conversion Input].Columns[competition_id]"
+                      cachedDataType="wstr"
+                      cachedLength="50"
+                      cachedName="competition_id"
+                      lineageId="Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Output].Columns[competition_id]" />
+                    <inputColumn
+                      refId="Package\ETL Fact_Appearances\Data Conversion.Inputs[Data Conversion Input].Columns[goals]"
+                      cachedDataType="wstr"
+                      cachedLength="50"
+                      cachedName="goals"
+                      lineageId="Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Output].Columns[goals]" />
+                    <inputColumn
+                      refId="Package\ETL Fact_Appearances\Data Conversion.Inputs[Data Conversion Input].Columns[assists]"
+                      cachedDataType="wstr"
+                      cachedLength="50"
+                      cachedName="assists"
+                      lineageId="Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Output].Columns[assists]" />
+                    <inputColumn
+                      refId="Package\ETL Fact_Appearances\Data Conversion.Inputs[Data Conversion Input].Columns[minutes_played]"
+                      cachedDataType="wstr"
+                      cachedLength="50"
+                      cachedName="minutes_played"
+                      lineageId="Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Output].Columns[minutes_played]" />
+                  </inputColumns>
+                  <externalMetadataColumns />
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\ETL Fact_Appearances\Data Conversion.Outputs[Data Conversion Output]"
+                  exclusionGroup="1"
+                  name="Data Conversion Output"
+                  synchronousInputId="Package\ETL Fact_Appearances\Data Conversion.Inputs[Data Conversion Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\ETL Fact_Appearances\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of player_id]"
+                      dataType="i4"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      lineageId="Package\ETL Fact_Appearances\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of player_id]"
+                      name="Copy of player_id"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="Specifies the input column used as the source of data for the conversion."
+                          name="SourceInputColumnLineageID">#{Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Output].Columns[player_id]}</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                          name="FastParse">false</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\ETL Fact_Appearances\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of player_club_id]"
+                      dataType="i4"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      lineageId="Package\ETL Fact_Appearances\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of player_club_id]"
+                      name="Copy of player_club_id"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="Specifies the input column used as the source of data for the conversion."
+                          name="SourceInputColumnLineageID">#{Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Output].Columns[player_club_id]}</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                          name="FastParse">false</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\ETL Fact_Appearances\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of date]"
+                      dataType="dbDate"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      lineageId="Package\ETL Fact_Appearances\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of date]"
+                      name="Copy of date"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="Specifies the input column used as the source of data for the conversion."
+                          name="SourceInputColumnLineageID">#{Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Output].Columns[date]}</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                          name="FastParse">false</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\ETL Fact_Appearances\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of competition_id]"
+                      codePage="1252"
+                      dataType="str"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      length="20"
+                      lineageId="Package\ETL Fact_Appearances\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of competition_id]"
+                      name="Copy of competition_id"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="Specifies the input column used as the source of data for the conversion."
+                          name="SourceInputColumnLineageID">#{Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Output].Columns[competition_id]}</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                          name="FastParse">false</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\ETL Fact_Appearances\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of goals]"
+                      dataType="i4"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      lineageId="Package\ETL Fact_Appearances\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of goals]"
+                      name="Copy of goals"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="Specifies the input column used as the source of data for the conversion."
+                          name="SourceInputColumnLineageID">#{Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Output].Columns[goals]}</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                          name="FastParse">false</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\ETL Fact_Appearances\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of assists]"
+                      dataType="i4"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      lineageId="Package\ETL Fact_Appearances\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of assists]"
+                      name="Copy of assists"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="Specifies the input column used as the source of data for the conversion."
+                          name="SourceInputColumnLineageID">#{Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Output].Columns[assists]}</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                          name="FastParse">false</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\ETL Fact_Appearances\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of minutes_played]"
+                      dataType="i4"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      lineageId="Package\ETL Fact_Appearances\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of minutes_played]"
+                      name="Copy of minutes_played"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="Specifies the input column used as the source of data for the conversion."
+                          name="SourceInputColumnLineageID">#{Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Output].Columns[minutes_played]}</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                          name="FastParse">false</property>
+                      </properties>
+                    </outputColumn>
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+                <output
+                  refId="Package\ETL Fact_Appearances\Data Conversion.Outputs[Data Conversion Error Output]"
+                  exclusionGroup="1"
+                  isErrorOut="true"
+                  name="Data Conversion Error Output"
+                  synchronousInputId="Package\ETL Fact_Appearances\Data Conversion.Inputs[Data Conversion Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\ETL Fact_Appearances\Data Conversion.Outputs[Data Conversion Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\ETL Fact_Appearances\Data Conversion.Outputs[Data Conversion Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\ETL Fact_Appearances\Data Conversion.Outputs[Data Conversion Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\ETL Fact_Appearances\Data Conversion.Outputs[Data Conversion Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\ETL Fact_Appearances\JOIN club_sid"
+              componentClassID="Microsoft.Lookup"
+              contactInfo="Lookup;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;6"
+              description="Joins additional columns to the data flow by looking up values in a table. For example, join to the 'employee id' column the employees table to get 'hire date' and 'employee name'. We recommend this transformation when the lookup table can fit into memory."
+              name="JOIN club_sid"
+              usesDispositions="true"
+              version="6">
+              <properties>
+                <property
+                  dataType="System.String"
+                  description="Specifies the SQL statement that generates the lookup table."
+                  expressionType="Notify"
+                  name="SqlCommand"
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor">select * from [dbo].[Dim_Club]</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies a SQL statement that uses parameters to generate the lookup table."
+                  expressionType="Notify"
+                  name="SqlCommandParam"
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor">select * from (select * from [dbo].[Dim_Club]) [refTable]
+where [refTable].[club_id] = ?</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the type of connection used to access the reference dataset."
+                  name="ConnectionType"
+                  typeConverter="LookupConnectionType">0</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the cache type of the lookup table."
+                  name="CacheType"
+                  typeConverter="CacheType">0</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies how the Lookup transformation handles rows without matching entries in the reference data set."
+                  name="NoMatchBehavior"
+                  typeConverter="LookupNoMatchBehavior">1</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the percentage of the cache that is allocated for rows with no matching entries in the reference dataset."
+                  name="NoMatchCachePercentage">0</property>
+                <property
+                  dataType="System.Int32"
+                  description="Maximum Memory Usage for Reference Cache on a 32 bit platform."
+                  name="MaxMemoryUsage">25</property>
+                <property
+                  dataType="System.Int64"
+                  description="Maximum Memory Usage for Reference Cache on a 64 bit platform."
+                  name="MaxMemoryUsage64">25</property>
+                <property
+                  dataType="System.String"
+                  description="Indicates whether to reference metadata in an XML format."
+                  name="ReferenceMetadataXml">&lt;referenceMetadata&gt;&lt;referenceColumns&gt;&lt;referenceColumn name="club_sid" dataType="DT_I4" length="0" precision="0" scale="0" codePage="0"/&gt;&lt;referenceColumn name="club_id" dataType="DT_I4" length="0" precision="0" scale="0" codePage="0"/&gt;&lt;referenceColumn name="name" dataType="DT_WSTR" length="100" precision="0" scale="0" codePage="0"/&gt;&lt;referenceColumn name="club_code" dataType="DT_STR" length="70" precision="0" scale="0" codePage="1252"/&gt;&lt;referenceColumn name="country_sid" dataType="DT_I4" length="0" precision="0" scale="0" codePage="0"/&gt;&lt;referenceColumn name="stadium_name" dataType="DT_WSTR" length="100" precision="0" scale="0" codePage="0"/&gt;&lt;referenceColumn name="stadium_seats" dataType="DT_I8" length="0" precision="0" scale="0" codePage="0"/&gt;&lt;referenceColumn name="coach_name" dataType="DT_WSTR" length="100" precision="0" scale="0" codePage="0"/&gt;&lt;/referenceColumns&gt;&lt;/referenceMetadata&gt;</property>
+                <property
+                  containsID="true"
+                  dataType="System.String"
+                  description="Specifies the list of lineage identifiers that map to the parameters that the SQL statement in the SQLCommand property uses. Entries in the list are separated by semicolons."
+                  name="ParameterMap">#{Package\ETL Fact_Appearances\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of player_club_id]};</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the column code page to use when code page information is unavailable from the data source."
+                  name="DefaultCodePage">1252</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Determines whether duplicate keys in the reference data should be treated as errors when full cache mode is used."
+                  name="TreatDuplicateKeysAsError">false</property>
+              </properties>
+              <connections>
+                <connection
+                  refId="Package\ETL Fact_Appearances\JOIN club_sid.Connections[OleDbConnection]"
+                  connectionManagerID="{48255525-DF27-4D39-9F96-F9E61C00D4D5}:external"
+                  connectionManagerRefId="Project.ConnectionManagers[DESKTOP-TVVRCUR_SQLEXPRESS.FootballScoutingDW]"
+                  description="Connection manager used to access lookup data."
+                  name="OleDbConnection" />
+              </connections>
+              <inputs>
+                <input
+                  refId="Package\ETL Fact_Appearances\JOIN club_sid.Inputs[Lookup Input]"
+                  name="Lookup Input">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\ETL Fact_Appearances\JOIN club_sid.Inputs[Lookup Input].Columns[Copy of player_club_id]"
+                      cachedDataType="i4"
+                      cachedName="Copy of player_club_id"
+                      lineageId="Package\ETL Fact_Appearances\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of player_club_id]">
+                      <properties>
+                        <property
+                          dataType="System.String"
+                          description="Specifies the column in the reference table that a column joins."
+                          name="JoinToReferenceColumn">club_id</property>
+                        <property
+                          dataType="System.Null"
+                          description="Specifies the column in the reference table from which a column is copied."
+                          name="CopyFromReferenceColumn" />
+                      </properties>
+                    </inputColumn>
+                  </inputColumns>
+                  <externalMetadataColumns />
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\ETL Fact_Appearances\JOIN club_sid.Outputs[Lookup Match Output]"
+                  errorOrTruncationOperation="Lookup"
+                  exclusionGroup="1"
+                  name="Lookup Match Output"
+                  synchronousInputId="Package\ETL Fact_Appearances\JOIN club_sid.Inputs[Lookup Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\ETL Fact_Appearances\JOIN club_sid.Outputs[Lookup Match Output].Columns[club_sid]"
+                      dataType="i4"
+                      errorOrTruncationOperation="Copy Column"
+                      lineageId="Package\ETL Fact_Appearances\JOIN club_sid.Outputs[Lookup Match Output].Columns[club_sid]"
+                      name="club_sid"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          dataType="System.String"
+                          description="Specifies the column in the reference table from which a column is copied."
+                          name="CopyFromReferenceColumn">club_sid</property>
+                      </properties>
+                    </outputColumn>
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+                <output
+                  refId="Package\ETL Fact_Appearances\JOIN club_sid.Outputs[Lookup No Match Output]"
+                  description="The Lookup output that handles rows with no matching entries in the reference dataset. Use this output when the NoMatchBehavior property is set to &quot;Send rows with no matching entries to the no match output.&quot;"
+                  exclusionGroup="1"
+                  name="Lookup No Match Output"
+                  synchronousInputId="Package\ETL Fact_Appearances\JOIN club_sid.Inputs[Lookup Input]">
+                  <externalMetadataColumns />
+                </output>
+                <output
+                  refId="Package\ETL Fact_Appearances\JOIN club_sid.Outputs[Lookup Error Output]"
+                  exclusionGroup="1"
+                  isErrorOut="true"
+                  name="Lookup Error Output"
+                  synchronousInputId="Package\ETL Fact_Appearances\JOIN club_sid.Inputs[Lookup Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\ETL Fact_Appearances\JOIN club_sid.Outputs[Lookup Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\ETL Fact_Appearances\JOIN club_sid.Outputs[Lookup Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\ETL Fact_Appearances\JOIN club_sid.Outputs[Lookup Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\ETL Fact_Appearances\JOIN club_sid.Outputs[Lookup Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\ETL Fact_Appearances\JOIN competition_sid"
+              componentClassID="Microsoft.Lookup"
+              contactInfo="Lookup;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;6"
+              description="Joins additional columns to the data flow by looking up values in a table. For example, join to the 'employee id' column the employees table to get 'hire date' and 'employee name'. We recommend this transformation when the lookup table can fit into memory."
+              name="JOIN competition_sid"
+              usesDispositions="true"
+              version="6">
+              <properties>
+                <property
+                  dataType="System.String"
+                  description="Specifies the SQL statement that generates the lookup table."
+                  expressionType="Notify"
+                  name="SqlCommand"
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor">select * from [dbo].[Dim_Competition]</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies a SQL statement that uses parameters to generate the lookup table."
+                  expressionType="Notify"
+                  name="SqlCommandParam"
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor">select * from (select * from [dbo].[Dim_Competition]) [refTable]
+where [refTable].[competition_id] = ?</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the type of connection used to access the reference dataset."
+                  name="ConnectionType"
+                  typeConverter="LookupConnectionType">0</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the cache type of the lookup table."
+                  name="CacheType"
+                  typeConverter="CacheType">0</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies how the Lookup transformation handles rows without matching entries in the reference data set."
+                  name="NoMatchBehavior"
+                  typeConverter="LookupNoMatchBehavior">1</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the percentage of the cache that is allocated for rows with no matching entries in the reference dataset."
+                  name="NoMatchCachePercentage">0</property>
+                <property
+                  dataType="System.Int32"
+                  description="Maximum Memory Usage for Reference Cache on a 32 bit platform."
+                  name="MaxMemoryUsage">25</property>
+                <property
+                  dataType="System.Int64"
+                  description="Maximum Memory Usage for Reference Cache on a 64 bit platform."
+                  name="MaxMemoryUsage64">25</property>
+                <property
+                  dataType="System.String"
+                  description="Indicates whether to reference metadata in an XML format."
+                  name="ReferenceMetadataXml">&lt;referenceMetadata&gt;&lt;referenceColumns&gt;&lt;referenceColumn name="competition_sid" dataType="DT_I4" length="0" precision="0" scale="0" codePage="0"/&gt;&lt;referenceColumn name="competition_id" dataType="DT_STR" length="20" precision="0" scale="0" codePage="1252"/&gt;&lt;referenceColumn name="name" dataType="DT_WSTR" length="100" precision="0" scale="0" codePage="0"/&gt;&lt;referenceColumn name="type" dataType="DT_STR" length="50" precision="0" scale="0" codePage="1252"/&gt;&lt;referenceColumn name="sub_type" dataType="DT_STR" length="100" precision="0" scale="0" codePage="1252"/&gt;&lt;referenceColumn name="country_sid" dataType="DT_I4" length="0" precision="0" scale="0" codePage="0"/&gt;&lt;referenceColumn name="confederation" dataType="DT_STR" length="20" precision="0" scale="0" codePage="1252"/&gt;&lt;/referenceColumns&gt;&lt;/referenceMetadata&gt;</property>
+                <property
+                  containsID="true"
+                  dataType="System.String"
+                  description="Specifies the list of lineage identifiers that map to the parameters that the SQL statement in the SQLCommand property uses. Entries in the list are separated by semicolons."
+                  name="ParameterMap">#{Package\ETL Fact_Appearances\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of competition_id]};</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the column code page to use when code page information is unavailable from the data source."
+                  name="DefaultCodePage">1252</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Determines whether duplicate keys in the reference data should be treated as errors when full cache mode is used."
+                  name="TreatDuplicateKeysAsError">false</property>
+              </properties>
+              <connections>
+                <connection
+                  refId="Package\ETL Fact_Appearances\JOIN competition_sid.Connections[OleDbConnection]"
+                  connectionManagerID="{48255525-DF27-4D39-9F96-F9E61C00D4D5}:external"
+                  connectionManagerRefId="Project.ConnectionManagers[DESKTOP-TVVRCUR_SQLEXPRESS.FootballScoutingDW]"
+                  description="Connection manager used to access lookup data."
+                  name="OleDbConnection" />
+              </connections>
+              <inputs>
+                <input
+                  refId="Package\ETL Fact_Appearances\JOIN competition_sid.Inputs[Lookup Input]"
+                  name="Lookup Input">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\ETL Fact_Appearances\JOIN competition_sid.Inputs[Lookup Input].Columns[Copy of competition_id]"
+                      cachedCodepage="1252"
+                      cachedDataType="str"
+                      cachedLength="20"
+                      cachedName="Copy of competition_id"
+                      lineageId="Package\ETL Fact_Appearances\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of competition_id]">
+                      <properties>
+                        <property
+                          dataType="System.String"
+                          description="Specifies the column in the reference table that a column joins."
+                          name="JoinToReferenceColumn">competition_id</property>
+                        <property
+                          dataType="System.Null"
+                          description="Specifies the column in the reference table from which a column is copied."
+                          name="CopyFromReferenceColumn" />
+                      </properties>
+                    </inputColumn>
+                  </inputColumns>
+                  <externalMetadataColumns />
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\ETL Fact_Appearances\JOIN competition_sid.Outputs[Lookup Match Output]"
+                  errorOrTruncationOperation="Lookup"
+                  exclusionGroup="1"
+                  name="Lookup Match Output"
+                  synchronousInputId="Package\ETL Fact_Appearances\JOIN competition_sid.Inputs[Lookup Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\ETL Fact_Appearances\JOIN competition_sid.Outputs[Lookup Match Output].Columns[competition_sid]"
+                      dataType="i4"
+                      errorOrTruncationOperation="Copy Column"
+                      lineageId="Package\ETL Fact_Appearances\JOIN competition_sid.Outputs[Lookup Match Output].Columns[competition_sid]"
+                      name="competition_sid"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          dataType="System.String"
+                          description="Specifies the column in the reference table from which a column is copied."
+                          name="CopyFromReferenceColumn">competition_sid</property>
+                      </properties>
+                    </outputColumn>
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+                <output
+                  refId="Package\ETL Fact_Appearances\JOIN competition_sid.Outputs[Lookup No Match Output]"
+                  description="The Lookup output that handles rows with no matching entries in the reference dataset. Use this output when the NoMatchBehavior property is set to &quot;Send rows with no matching entries to the no match output.&quot;"
+                  exclusionGroup="1"
+                  name="Lookup No Match Output"
+                  synchronousInputId="Package\ETL Fact_Appearances\JOIN competition_sid.Inputs[Lookup Input]">
+                  <externalMetadataColumns />
+                </output>
+                <output
+                  refId="Package\ETL Fact_Appearances\JOIN competition_sid.Outputs[Lookup Error Output]"
+                  exclusionGroup="1"
+                  isErrorOut="true"
+                  name="Lookup Error Output"
+                  synchronousInputId="Package\ETL Fact_Appearances\JOIN competition_sid.Inputs[Lookup Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\ETL Fact_Appearances\JOIN competition_sid.Outputs[Lookup Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\ETL Fact_Appearances\JOIN competition_sid.Outputs[Lookup Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\ETL Fact_Appearances\JOIN competition_sid.Outputs[Lookup Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\ETL Fact_Appearances\JOIN competition_sid.Outputs[Lookup Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\ETL Fact_Appearances\JOIN date_sid"
+              componentClassID="Microsoft.Lookup"
+              contactInfo="Lookup;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;6"
+              description="Joins additional columns to the data flow by looking up values in a table. For example, join to the 'employee id' column the employees table to get 'hire date' and 'employee name'. We recommend this transformation when the lookup table can fit into memory."
+              name="JOIN date_sid"
+              usesDispositions="true"
+              version="6">
+              <properties>
+                <property
+                  dataType="System.String"
+                  description="Specifies the SQL statement that generates the lookup table."
+                  expressionType="Notify"
+                  name="SqlCommand"
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor">select * from [dbo].[Dim_Date]</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies a SQL statement that uses parameters to generate the lookup table."
+                  expressionType="Notify"
+                  name="SqlCommandParam"
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor">select * from (select * from [dbo].[Dim_Date]) [refTable]
+where [refTable].[date_sid] = ?</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the type of connection used to access the reference dataset."
+                  name="ConnectionType"
+                  typeConverter="LookupConnectionType">0</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the cache type of the lookup table."
+                  name="CacheType"
+                  typeConverter="CacheType">0</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies how the Lookup transformation handles rows without matching entries in the reference data set."
+                  name="NoMatchBehavior"
+                  typeConverter="LookupNoMatchBehavior">1</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the percentage of the cache that is allocated for rows with no matching entries in the reference dataset."
+                  name="NoMatchCachePercentage">0</property>
+                <property
+                  dataType="System.Int32"
+                  description="Maximum Memory Usage for Reference Cache on a 32 bit platform."
+                  name="MaxMemoryUsage">25</property>
+                <property
+                  dataType="System.Int64"
+                  description="Maximum Memory Usage for Reference Cache on a 64 bit platform."
+                  name="MaxMemoryUsage64">25</property>
+                <property
+                  dataType="System.String"
+                  description="Indicates whether to reference metadata in an XML format."
+                  name="ReferenceMetadataXml">&lt;referenceMetadata&gt;&lt;referenceColumns&gt;&lt;referenceColumn name="date_sid" dataType="DT_I4" length="0" precision="0" scale="0" codePage="0"/&gt;&lt;referenceColumn name="year" dataType="DT_I4" length="0" precision="0" scale="0" codePage="0"/&gt;&lt;referenceColumn name="quarter" dataType="DT_STR" length="2" precision="0" scale="0" codePage="1252"/&gt;&lt;referenceColumn name="month" dataType="DT_I4" length="0" precision="0" scale="0" codePage="0"/&gt;&lt;referenceColumn name="day" dataType="DT_I4" length="0" precision="0" scale="0" codePage="0"/&gt;&lt;referenceColumn name="season" dataType="DT_STR" length="10" precision="0" scale="0" codePage="1252"/&gt;&lt;/referenceColumns&gt;&lt;/referenceMetadata&gt;</property>
+                <property
+                  containsID="true"
+                  dataType="System.String"
+                  description="Specifies the list of lineage identifiers that map to the parameters that the SQL statement in the SQLCommand property uses. Entries in the list are separated by semicolons."
+                  name="ParameterMap">#{Package\ETL Fact_Appearances\CALCULATE date.Outputs[Derived Column Output].Columns[date_sid]};</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the column code page to use when code page information is unavailable from the data source."
+                  name="DefaultCodePage">1252</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Determines whether duplicate keys in the reference data should be treated as errors when full cache mode is used."
+                  name="TreatDuplicateKeysAsError">false</property>
+              </properties>
+              <connections>
+                <connection
+                  refId="Package\ETL Fact_Appearances\JOIN date_sid.Connections[OleDbConnection]"
+                  connectionManagerID="{48255525-DF27-4D39-9F96-F9E61C00D4D5}:external"
+                  connectionManagerRefId="Project.ConnectionManagers[DESKTOP-TVVRCUR_SQLEXPRESS.FootballScoutingDW]"
+                  description="Connection manager used to access lookup data."
+                  name="OleDbConnection" />
+              </connections>
+              <inputs>
+                <input
+                  refId="Package\ETL Fact_Appearances\JOIN date_sid.Inputs[Lookup Input]"
+                  name="Lookup Input">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\ETL Fact_Appearances\JOIN date_sid.Inputs[Lookup Input].Columns[date_sid]"
+                      cachedDataType="i4"
+                      cachedName="date_sid"
+                      lineageId="Package\ETL Fact_Appearances\CALCULATE date.Outputs[Derived Column Output].Columns[date_sid]">
+                      <properties>
+                        <property
+                          dataType="System.String"
+                          description="Specifies the column in the reference table that a column joins."
+                          name="JoinToReferenceColumn">date_sid</property>
+                        <property
+                          dataType="System.Null"
+                          description="Specifies the column in the reference table from which a column is copied."
+                          name="CopyFromReferenceColumn" />
+                      </properties>
+                    </inputColumn>
+                  </inputColumns>
+                  <externalMetadataColumns />
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\ETL Fact_Appearances\JOIN date_sid.Outputs[Lookup Match Output]"
+                  errorOrTruncationOperation="Lookup"
+                  exclusionGroup="1"
+                  name="Lookup Match Output"
+                  synchronousInputId="Package\ETL Fact_Appearances\JOIN date_sid.Inputs[Lookup Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\ETL Fact_Appearances\JOIN date_sid.Outputs[Lookup Match Output].Columns[date_sid]"
+                      dataType="i4"
+                      errorOrTruncationOperation="Copy Column"
+                      lineageId="Package\ETL Fact_Appearances\JOIN date_sid.Outputs[Lookup Match Output].Columns[date_sid]"
+                      name="date_sid"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          dataType="System.String"
+                          description="Specifies the column in the reference table from which a column is copied."
+                          name="CopyFromReferenceColumn">date_sid</property>
+                      </properties>
+                    </outputColumn>
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+                <output
+                  refId="Package\ETL Fact_Appearances\JOIN date_sid.Outputs[Lookup No Match Output]"
+                  description="The Lookup output that handles rows with no matching entries in the reference dataset. Use this output when the NoMatchBehavior property is set to &quot;Send rows with no matching entries to the no match output.&quot;"
+                  exclusionGroup="1"
+                  name="Lookup No Match Output"
+                  synchronousInputId="Package\ETL Fact_Appearances\JOIN date_sid.Inputs[Lookup Input]">
+                  <externalMetadataColumns />
+                </output>
+                <output
+                  refId="Package\ETL Fact_Appearances\JOIN date_sid.Outputs[Lookup Error Output]"
+                  exclusionGroup="1"
+                  isErrorOut="true"
+                  name="Lookup Error Output"
+                  synchronousInputId="Package\ETL Fact_Appearances\JOIN date_sid.Inputs[Lookup Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\ETL Fact_Appearances\JOIN date_sid.Outputs[Lookup Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\ETL Fact_Appearances\JOIN date_sid.Outputs[Lookup Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\ETL Fact_Appearances\JOIN date_sid.Outputs[Lookup Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\ETL Fact_Appearances\JOIN date_sid.Outputs[Lookup Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\ETL Fact_Appearances\JOIN player_sid"
+              componentClassID="Microsoft.Lookup"
+              contactInfo="Lookup;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;6"
+              description="Joins additional columns to the data flow by looking up values in a table. For example, join to the 'employee id' column the employees table to get 'hire date' and 'employee name'. We recommend this transformation when the lookup table can fit into memory."
+              name="JOIN player_sid"
+              usesDispositions="true"
+              version="6">
+              <properties>
+                <property
+                  dataType="System.String"
+                  description="Specifies the SQL statement that generates the lookup table."
+                  expressionType="Notify"
+                  name="SqlCommand"
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor">select * from [dbo].[Dim_Player]</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies a SQL statement that uses parameters to generate the lookup table."
+                  expressionType="Notify"
+                  name="SqlCommandParam"
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor">select * from (select * from [dbo].[Dim_Player]) [refTable]
+where [refTable].[player_id] = ?</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the type of connection used to access the reference dataset."
+                  name="ConnectionType"
+                  typeConverter="LookupConnectionType">0</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the cache type of the lookup table."
+                  name="CacheType"
+                  typeConverter="CacheType">0</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies how the Lookup transformation handles rows without matching entries in the reference data set."
+                  name="NoMatchBehavior"
+                  typeConverter="LookupNoMatchBehavior">1</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the percentage of the cache that is allocated for rows with no matching entries in the reference dataset."
+                  name="NoMatchCachePercentage">0</property>
+                <property
+                  dataType="System.Int32"
+                  description="Maximum Memory Usage for Reference Cache on a 32 bit platform."
+                  name="MaxMemoryUsage">25</property>
+                <property
+                  dataType="System.Int64"
+                  description="Maximum Memory Usage for Reference Cache on a 64 bit platform."
+                  name="MaxMemoryUsage64">25</property>
+                <property
+                  dataType="System.String"
+                  description="Indicates whether to reference metadata in an XML format."
+                  name="ReferenceMetadataXml">&lt;referenceMetadata&gt;&lt;referenceColumns&gt;&lt;referenceColumn name="player_sid" dataType="DT_I4" length="0" precision="0" scale="0" codePage="0"/&gt;&lt;referenceColumn name="player_id" dataType="DT_I4" length="0" precision="0" scale="0" codePage="0"/&gt;&lt;referenceColumn name="first_name" dataType="DT_WSTR" length="80" precision="0" scale="0" codePage="0"/&gt;&lt;referenceColumn name="last_name" dataType="DT_WSTR" length="80" precision="0" scale="0" codePage="0"/&gt;&lt;referenceColumn name="date_of_birth" dataType="DT_DBDATE" length="0" precision="0" scale="0" codePage="0"/&gt;&lt;referenceColumn name="position_sid" dataType="DT_I4" length="0" precision="0" scale="0" codePage="0"/&gt;&lt;referenceColumn name="foot" dataType="DT_STR" length="10" precision="0" scale="0" codePage="1252"/&gt;&lt;referenceColumn name="height_cm" dataType="DT_I4" length="0" precision="0" scale="0" codePage="0"/&gt;&lt;referenceColumn name="contract_expiration" dataType="DT_DBDATE" length="0" precision="0" scale="0" codePage="0"/&gt;&lt;referenceColumn name="last_season" dataType="DT_I4" length="0" precision="0" scale="0" codePage="0"/&gt;&lt;/referenceColumns&gt;&lt;/referenceMetadata&gt;</property>
+                <property
+                  containsID="true"
+                  dataType="System.String"
+                  description="Specifies the list of lineage identifiers that map to the parameters that the SQL statement in the SQLCommand property uses. Entries in the list are separated by semicolons."
+                  name="ParameterMap">#{Package\ETL Fact_Appearances\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of player_id]};</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the column code page to use when code page information is unavailable from the data source."
+                  name="DefaultCodePage">1252</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Determines whether duplicate keys in the reference data should be treated as errors when full cache mode is used."
+                  name="TreatDuplicateKeysAsError">false</property>
+              </properties>
+              <connections>
+                <connection
+                  refId="Package\ETL Fact_Appearances\JOIN player_sid.Connections[OleDbConnection]"
+                  connectionManagerID="{48255525-DF27-4D39-9F96-F9E61C00D4D5}:external"
+                  connectionManagerRefId="Project.ConnectionManagers[DESKTOP-TVVRCUR_SQLEXPRESS.FootballScoutingDW]"
+                  description="Connection manager used to access lookup data."
+                  name="OleDbConnection" />
+              </connections>
+              <inputs>
+                <input
+                  refId="Package\ETL Fact_Appearances\JOIN player_sid.Inputs[Lookup Input]"
+                  name="Lookup Input">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\ETL Fact_Appearances\JOIN player_sid.Inputs[Lookup Input].Columns[Copy of player_id]"
+                      cachedDataType="i4"
+                      cachedName="Copy of player_id"
+                      lineageId="Package\ETL Fact_Appearances\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of player_id]">
+                      <properties>
+                        <property
+                          dataType="System.String"
+                          description="Specifies the column in the reference table that a column joins."
+                          name="JoinToReferenceColumn">player_id</property>
+                        <property
+                          dataType="System.Null"
+                          description="Specifies the column in the reference table from which a column is copied."
+                          name="CopyFromReferenceColumn" />
+                      </properties>
+                    </inputColumn>
+                  </inputColumns>
+                  <externalMetadataColumns />
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\ETL Fact_Appearances\JOIN player_sid.Outputs[Lookup Match Output]"
+                  errorOrTruncationOperation="Lookup"
+                  exclusionGroup="1"
+                  name="Lookup Match Output"
+                  synchronousInputId="Package\ETL Fact_Appearances\JOIN player_sid.Inputs[Lookup Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\ETL Fact_Appearances\JOIN player_sid.Outputs[Lookup Match Output].Columns[player_sid]"
+                      dataType="i4"
+                      errorOrTruncationOperation="Copy Column"
+                      lineageId="Package\ETL Fact_Appearances\JOIN player_sid.Outputs[Lookup Match Output].Columns[player_sid]"
+                      name="player_sid"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          dataType="System.String"
+                          description="Specifies the column in the reference table from which a column is copied."
+                          name="CopyFromReferenceColumn">player_sid</property>
+                      </properties>
+                    </outputColumn>
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+                <output
+                  refId="Package\ETL Fact_Appearances\JOIN player_sid.Outputs[Lookup No Match Output]"
+                  description="The Lookup output that handles rows with no matching entries in the reference dataset. Use this output when the NoMatchBehavior property is set to &quot;Send rows with no matching entries to the no match output.&quot;"
+                  exclusionGroup="1"
+                  name="Lookup No Match Output"
+                  synchronousInputId="Package\ETL Fact_Appearances\JOIN player_sid.Inputs[Lookup Input]">
+                  <externalMetadataColumns />
+                </output>
+                <output
+                  refId="Package\ETL Fact_Appearances\JOIN player_sid.Outputs[Lookup Error Output]"
+                  exclusionGroup="1"
+                  isErrorOut="true"
+                  name="Lookup Error Output"
+                  synchronousInputId="Package\ETL Fact_Appearances\JOIN player_sid.Inputs[Lookup Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\ETL Fact_Appearances\JOIN player_sid.Outputs[Lookup Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\ETL Fact_Appearances\JOIN player_sid.Outputs[Lookup Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\ETL Fact_Appearances\JOIN player_sid.Outputs[Lookup Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\ETL Fact_Appearances\JOIN player_sid.Outputs[Lookup Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\ETL Fact_Appearances\LOAD data in Fact_Appearances"
+              componentClassID="Microsoft.OLEDBDestination"
+              contactInfo="OLE DB Destination;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;4"
+              description="OLE DB Destination"
+              name="LOAD data in Fact_Appearances"
+              usesDispositions="true"
+              version="4">
+              <properties>
+                <property
+                  dataType="System.Int32"
+                  description="The number of seconds before a command times out.  A value of 0 indicates an infinite time-out."
+                  name="CommandTimeout">0</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the name of the database object used to open a rowset."
+                  name="OpenRowset">[dbo].[Fact_Appearances]</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the variable that contains the name of the database object used to open a rowset."
+                  name="OpenRowsetVariable"></property>
+                <property
+                  dataType="System.String"
+                  description="The SQL command to be executed."
+                  name="SqlCommand"
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor"></property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the column code page to use when code page information is unavailable from the data source."
+                  name="DefaultCodePage">1252</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Forces the use of the DefaultCodePage property value when describing character data."
+                  name="AlwaysUseDefaultCodePage">false</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the mode used to access the database."
+                  name="AccessMode"
+                  typeConverter="AccessMode">3</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Indicates whether the values supplied for identity columns will be copied to the destination. If false, values for identity columns will be auto-generated at the destination. Applies only if fast load is turned on."
+                  name="FastLoadKeepIdentity">false</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Indicates whether the columns containing null will have null inserted in the destination. If false, columns containing null will have their default values inserted at the destination. Applies only if fast load is turned on."
+                  name="FastLoadKeepNulls">false</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies options to be used with fast load.  Applies only if fast load is turned on."
+                  name="FastLoadOptions">TABLOCK,CHECK_CONSTRAINTS</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies when commits are issued during data insertion.  A value of 0 specifies that one commit will be issued at the end of data insertion.  Applies only if fast load is turned on."
+                  name="FastLoadMaxInsertCommitSize">2147483647</property>
+              </properties>
+              <connections>
+                <connection
+                  refId="Package\ETL Fact_Appearances\LOAD data in Fact_Appearances.Connections[OleDbConnection]"
+                  connectionManagerID="{48255525-DF27-4D39-9F96-F9E61C00D4D5}:external"
+                  connectionManagerRefId="Project.ConnectionManagers[DESKTOP-TVVRCUR_SQLEXPRESS.FootballScoutingDW]"
+                  description="The OLE DB runtime connection used to access the database."
+                  name="OleDbConnection" />
+              </connections>
+              <inputs>
+                <input
+                  refId="Package\ETL Fact_Appearances\LOAD data in Fact_Appearances.Inputs[OLE DB Destination Input]"
+                  errorOrTruncationOperation="Insert"
+                  errorRowDisposition="FailComponent"
+                  hasSideEffects="true"
+                  name="OLE DB Destination Input">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\ETL Fact_Appearances\LOAD data in Fact_Appearances.Inputs[OLE DB Destination Input].Columns[player_sid]"
+                      cachedDataType="i4"
+                      cachedName="player_sid"
+                      externalMetadataColumnId="Package\ETL Fact_Appearances\LOAD data in Fact_Appearances.Inputs[OLE DB Destination Input].ExternalColumns[player_sid]"
+                      lineageId="Package\ETL Fact_Appearances\JOIN player_sid.Outputs[Lookup Match Output].Columns[player_sid]" />
+                    <inputColumn
+                      refId="Package\ETL Fact_Appearances\LOAD data in Fact_Appearances.Inputs[OLE DB Destination Input].Columns[club_sid]"
+                      cachedDataType="i4"
+                      cachedName="club_sid"
+                      externalMetadataColumnId="Package\ETL Fact_Appearances\LOAD data in Fact_Appearances.Inputs[OLE DB Destination Input].ExternalColumns[club_sid]"
+                      lineageId="Package\ETL Fact_Appearances\JOIN club_sid.Outputs[Lookup Match Output].Columns[club_sid]" />
+                    <inputColumn
+                      refId="Package\ETL Fact_Appearances\LOAD data in Fact_Appearances.Inputs[OLE DB Destination Input].Columns[date_sid]"
+                      cachedDataType="i4"
+                      cachedName="date_sid"
+                      externalMetadataColumnId="Package\ETL Fact_Appearances\LOAD data in Fact_Appearances.Inputs[OLE DB Destination Input].ExternalColumns[date_sid]"
+                      lineageId="Package\ETL Fact_Appearances\JOIN date_sid.Outputs[Lookup Match Output].Columns[date_sid]" />
+                    <inputColumn
+                      refId="Package\ETL Fact_Appearances\LOAD data in Fact_Appearances.Inputs[OLE DB Destination Input].Columns[competition_sid]"
+                      cachedDataType="i4"
+                      cachedName="competition_sid"
+                      externalMetadataColumnId="Package\ETL Fact_Appearances\LOAD data in Fact_Appearances.Inputs[OLE DB Destination Input].ExternalColumns[competition_sid]"
+                      lineageId="Package\ETL Fact_Appearances\JOIN competition_sid.Outputs[Lookup Match Output].Columns[competition_sid]" />
+                    <inputColumn
+                      refId="Package\ETL Fact_Appearances\LOAD data in Fact_Appearances.Inputs[OLE DB Destination Input].Columns[Copy of goals]"
+                      cachedDataType="i4"
+                      cachedName="Copy of goals"
+                      externalMetadataColumnId="Package\ETL Fact_Appearances\LOAD data in Fact_Appearances.Inputs[OLE DB Destination Input].ExternalColumns[goals]"
+                      lineageId="Package\ETL Fact_Appearances\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of goals]" />
+                    <inputColumn
+                      refId="Package\ETL Fact_Appearances\LOAD data in Fact_Appearances.Inputs[OLE DB Destination Input].Columns[Copy of assists]"
+                      cachedDataType="i4"
+                      cachedName="Copy of assists"
+                      externalMetadataColumnId="Package\ETL Fact_Appearances\LOAD data in Fact_Appearances.Inputs[OLE DB Destination Input].ExternalColumns[assists]"
+                      lineageId="Package\ETL Fact_Appearances\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of assists]" />
+                    <inputColumn
+                      refId="Package\ETL Fact_Appearances\LOAD data in Fact_Appearances.Inputs[OLE DB Destination Input].Columns[Copy of minutes_played]"
+                      cachedDataType="i4"
+                      cachedName="Copy of minutes_played"
+                      externalMetadataColumnId="Package\ETL Fact_Appearances\LOAD data in Fact_Appearances.Inputs[OLE DB Destination Input].ExternalColumns[minutes_played]"
+                      lineageId="Package\ETL Fact_Appearances\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of minutes_played]" />
+                  </inputColumns>
+                  <externalMetadataColumns
+                    isUsed="True">
+                    <externalMetadataColumn
+                      refId="Package\ETL Fact_Appearances\LOAD data in Fact_Appearances.Inputs[OLE DB Destination Input].ExternalColumns[date_sid]"
+                      dataType="i4"
+                      name="date_sid" />
+                    <externalMetadataColumn
+                      refId="Package\ETL Fact_Appearances\LOAD data in Fact_Appearances.Inputs[OLE DB Destination Input].ExternalColumns[player_sid]"
+                      dataType="i4"
+                      name="player_sid" />
+                    <externalMetadataColumn
+                      refId="Package\ETL Fact_Appearances\LOAD data in Fact_Appearances.Inputs[OLE DB Destination Input].ExternalColumns[club_sid]"
+                      dataType="i4"
+                      name="club_sid" />
+                    <externalMetadataColumn
+                      refId="Package\ETL Fact_Appearances\LOAD data in Fact_Appearances.Inputs[OLE DB Destination Input].ExternalColumns[appearance_id]"
+                      dataType="i4"
+                      name="appearance_id" />
+                    <externalMetadataColumn
+                      refId="Package\ETL Fact_Appearances\LOAD data in Fact_Appearances.Inputs[OLE DB Destination Input].ExternalColumns[competition_sid]"
+                      dataType="i4"
+                      name="competition_sid" />
+                    <externalMetadataColumn
+                      refId="Package\ETL Fact_Appearances\LOAD data in Fact_Appearances.Inputs[OLE DB Destination Input].ExternalColumns[goals]"
+                      dataType="i4"
+                      name="goals" />
+                    <externalMetadataColumn
+                      refId="Package\ETL Fact_Appearances\LOAD data in Fact_Appearances.Inputs[OLE DB Destination Input].ExternalColumns[assists]"
+                      dataType="i4"
+                      name="assists" />
+                    <externalMetadataColumn
+                      refId="Package\ETL Fact_Appearances\LOAD data in Fact_Appearances.Inputs[OLE DB Destination Input].ExternalColumns[minutes_played]"
+                      dataType="i4"
+                      name="minutes_played" />
+                  </externalMetadataColumns>
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\ETL Fact_Appearances\LOAD data in Fact_Appearances.Outputs[OLE DB Destination Error Output]"
+                  exclusionGroup="1"
+                  isErrorOut="true"
+                  name="OLE DB Destination Error Output"
+                  synchronousInputId="Package\ETL Fact_Appearances\LOAD data in Fact_Appearances.Inputs[OLE DB Destination Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\ETL Fact_Appearances\LOAD data in Fact_Appearances.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\ETL Fact_Appearances\LOAD data in Fact_Appearances.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\ETL Fact_Appearances\LOAD data in Fact_Appearances.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\ETL Fact_Appearances\LOAD data in Fact_Appearances.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\ETL Fact_Appearances\READ data for Fact_Appearances"
+              componentClassID="Microsoft.OLEDBSource"
+              contactInfo="OLE DB Source;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;7"
+              description="OLE DB Source"
+              name="READ data for Fact_Appearances"
+              usesDispositions="true"
+              version="7">
+              <properties>
+                <property
+                  dataType="System.Int32"
+                  description="The number of seconds before a command times out.  A value of 0 indicates an infinite time-out."
+                  name="CommandTimeout">0</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the name of the database object used to open a rowset."
+                  name="OpenRowset">[dbo].[appearances]</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the variable that contains the name of the database object used to open a rowset."
+                  name="OpenRowsetVariable"></property>
+                <property
+                  dataType="System.String"
+                  description="The SQL command to be executed."
+                  name="SqlCommand"
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor"></property>
+                <property
+                  dataType="System.String"
+                  description="The variable that contains the SQL command to be executed."
+                  name="SqlCommandVariable"></property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the column code page to use when code page information is unavailable from the data source."
+                  name="DefaultCodePage">1252</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Forces the use of the DefaultCodePage property value when describing character data."
+                  name="AlwaysUseDefaultCodePage">false</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the mode used to access the database."
+                  name="AccessMode"
+                  typeConverter="AccessMode">0</property>
+                <property
+                  dataType="System.String"
+                  description="The mappings between the parameters in the SQL command and variables."
+                  name="ParameterMapping"></property>
+              </properties>
+              <connections>
+                <connection
+                  refId="Package\ETL Fact_Appearances\READ data for Fact_Appearances.Connections[OleDbConnection]"
+                  connectionManagerID="{286E3C80-51ED-4B50-9C64-31A3614A916B}:external"
+                  connectionManagerRefId="Project.ConnectionManagers[DESKTOP-TVVRCUR_SQLEXPRESS.FootballScouting_Staging]"
+                  description="The OLE DB runtime connection used to access the database."
+                  name="OleDbConnection" />
+              </connections>
+              <outputs>
+                <output
+                  refId="Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Output]"
+                  name="OLE DB Source Output">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Output].Columns[appearance_id]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Output].ExternalColumns[appearance_id]"
+                      length="50"
+                      lineageId="Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Output].Columns[appearance_id]"
+                      name="appearance_id"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Output].Columns[game_id]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Output].ExternalColumns[game_id]"
+                      length="50"
+                      lineageId="Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Output].Columns[game_id]"
+                      name="game_id"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Output].Columns[player_id]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Output].ExternalColumns[player_id]"
+                      length="50"
+                      lineageId="Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Output].Columns[player_id]"
+                      name="player_id"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Output].Columns[player_club_id]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Output].ExternalColumns[player_club_id]"
+                      length="50"
+                      lineageId="Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Output].Columns[player_club_id]"
+                      name="player_club_id"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Output].Columns[player_current_club_id]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Output].ExternalColumns[player_current_club_id]"
+                      length="50"
+                      lineageId="Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Output].Columns[player_current_club_id]"
+                      name="player_current_club_id"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Output].Columns[date]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Output].ExternalColumns[date]"
+                      length="50"
+                      lineageId="Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Output].Columns[date]"
+                      name="date"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Output].Columns[player_name]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Output].ExternalColumns[player_name]"
+                      length="150"
+                      lineageId="Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Output].Columns[player_name]"
+                      name="player_name"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Output].Columns[competition_id]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Output].ExternalColumns[competition_id]"
+                      length="50"
+                      lineageId="Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Output].Columns[competition_id]"
+                      name="competition_id"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Output].Columns[goals]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Output].ExternalColumns[goals]"
+                      length="50"
+                      lineageId="Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Output].Columns[goals]"
+                      name="goals"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Output].Columns[assists]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Output].ExternalColumns[assists]"
+                      length="50"
+                      lineageId="Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Output].Columns[assists]"
+                      name="assists"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Output].Columns[minutes_played]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Output].ExternalColumns[minutes_played]"
+                      length="50"
+                      lineageId="Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Output].Columns[minutes_played]"
+                      name="minutes_played"
+                      truncationRowDisposition="FailComponent" />
+                  </outputColumns>
+                  <externalMetadataColumns
+                    isUsed="True">
+                    <externalMetadataColumn
+                      refId="Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Output].ExternalColumns[appearance_id]"
+                      dataType="wstr"
+                      length="50"
+                      name="appearance_id" />
+                    <externalMetadataColumn
+                      refId="Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Output].ExternalColumns[game_id]"
+                      dataType="wstr"
+                      length="50"
+                      name="game_id" />
+                    <externalMetadataColumn
+                      refId="Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Output].ExternalColumns[player_id]"
+                      dataType="wstr"
+                      length="50"
+                      name="player_id" />
+                    <externalMetadataColumn
+                      refId="Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Output].ExternalColumns[player_club_id]"
+                      dataType="wstr"
+                      length="50"
+                      name="player_club_id" />
+                    <externalMetadataColumn
+                      refId="Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Output].ExternalColumns[player_current_club_id]"
+                      dataType="wstr"
+                      length="50"
+                      name="player_current_club_id" />
+                    <externalMetadataColumn
+                      refId="Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Output].ExternalColumns[date]"
+                      dataType="wstr"
+                      length="50"
+                      name="date" />
+                    <externalMetadataColumn
+                      refId="Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Output].ExternalColumns[player_name]"
+                      dataType="wstr"
+                      length="150"
+                      name="player_name" />
+                    <externalMetadataColumn
+                      refId="Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Output].ExternalColumns[competition_id]"
+                      dataType="wstr"
+                      length="50"
+                      name="competition_id" />
+                    <externalMetadataColumn
+                      refId="Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Output].ExternalColumns[goals]"
+                      dataType="wstr"
+                      length="50"
+                      name="goals" />
+                    <externalMetadataColumn
+                      refId="Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Output].ExternalColumns[assists]"
+                      dataType="wstr"
+                      length="50"
+                      name="assists" />
+                    <externalMetadataColumn
+                      refId="Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Output].ExternalColumns[minutes_played]"
+                      dataType="wstr"
+                      length="50"
+                      name="minutes_played" />
+                  </externalMetadataColumns>
+                </output>
+                <output
+                  refId="Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Error Output]"
+                  isErrorOut="true"
+                  name="OLE DB Source Error Output">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Error Output].Columns[appearance_id]"
+                      dataType="wstr"
+                      length="50"
+                      lineageId="Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Error Output].Columns[appearance_id]"
+                      name="appearance_id" />
+                    <outputColumn
+                      refId="Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Error Output].Columns[game_id]"
+                      dataType="wstr"
+                      length="50"
+                      lineageId="Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Error Output].Columns[game_id]"
+                      name="game_id" />
+                    <outputColumn
+                      refId="Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Error Output].Columns[player_id]"
+                      dataType="wstr"
+                      length="50"
+                      lineageId="Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Error Output].Columns[player_id]"
+                      name="player_id" />
+                    <outputColumn
+                      refId="Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Error Output].Columns[player_club_id]"
+                      dataType="wstr"
+                      length="50"
+                      lineageId="Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Error Output].Columns[player_club_id]"
+                      name="player_club_id" />
+                    <outputColumn
+                      refId="Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Error Output].Columns[player_current_club_id]"
+                      dataType="wstr"
+                      length="50"
+                      lineageId="Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Error Output].Columns[player_current_club_id]"
+                      name="player_current_club_id" />
+                    <outputColumn
+                      refId="Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Error Output].Columns[date]"
+                      dataType="wstr"
+                      length="50"
+                      lineageId="Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Error Output].Columns[date]"
+                      name="date" />
+                    <outputColumn
+                      refId="Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Error Output].Columns[player_name]"
+                      dataType="wstr"
+                      length="150"
+                      lineageId="Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Error Output].Columns[player_name]"
+                      name="player_name" />
+                    <outputColumn
+                      refId="Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Error Output].Columns[competition_id]"
+                      dataType="wstr"
+                      length="50"
+                      lineageId="Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Error Output].Columns[competition_id]"
+                      name="competition_id" />
+                    <outputColumn
+                      refId="Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Error Output].Columns[goals]"
+                      dataType="wstr"
+                      length="50"
+                      lineageId="Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Error Output].Columns[goals]"
+                      name="goals" />
+                    <outputColumn
+                      refId="Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Error Output].Columns[assists]"
+                      dataType="wstr"
+                      length="50"
+                      lineageId="Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Error Output].Columns[assists]"
+                      name="assists" />
+                    <outputColumn
+                      refId="Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Error Output].Columns[minutes_played]"
+                      dataType="wstr"
+                      length="50"
+                      lineageId="Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Error Output].Columns[minutes_played]"
+                      name="minutes_played" />
+                    <outputColumn
+                      refId="Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+          </components>
+          <paths>
+            <path
+              refId="Package\ETL Fact_Appearances.Paths[Data Conversion Output]"
+              endId="Package\ETL Fact_Appearances\JOIN player_sid.Inputs[Lookup Input]"
+              name="Data Conversion Output"
+              startId="Package\ETL Fact_Appearances\Data Conversion.Outputs[Data Conversion Output]" />
+            <path
+              refId="Package\ETL Fact_Appearances.Paths[Derived Column Output]"
+              endId="Package\ETL Fact_Appearances\JOIN date_sid.Inputs[Lookup Input]"
+              name="Derived Column Output"
+              startId="Package\ETL Fact_Appearances\CALCULATE date.Outputs[Derived Column Output]" />
+            <path
+              refId="Package\ETL Fact_Appearances.Paths[Lookup Match Output]"
+              endId="Package\ETL Fact_Appearances\JOIN club_sid.Inputs[Lookup Input]"
+              name="Lookup Match Output"
+              startId="Package\ETL Fact_Appearances\JOIN player_sid.Outputs[Lookup Match Output]" />
+            <path
+              refId="Package\ETL Fact_Appearances.Paths[Lookup Match Output1]"
+              endId="Package\ETL Fact_Appearances\CALCULATE date.Inputs[Derived Column Input]"
+              name="Lookup Match Output"
+              startId="Package\ETL Fact_Appearances\JOIN club_sid.Outputs[Lookup Match Output]" />
+            <path
+              refId="Package\ETL Fact_Appearances.Paths[Lookup Match Output2]"
+              endId="Package\ETL Fact_Appearances\JOIN competition_sid.Inputs[Lookup Input]"
+              name="Lookup Match Output"
+              startId="Package\ETL Fact_Appearances\JOIN date_sid.Outputs[Lookup Match Output]" />
+            <path
+              refId="Package\ETL Fact_Appearances.Paths[Lookup Match Output3]"
+              endId="Package\ETL Fact_Appearances\LOAD data in Fact_Appearances.Inputs[OLE DB Destination Input]"
+              name="Lookup Match Output"
+              startId="Package\ETL Fact_Appearances\JOIN competition_sid.Outputs[Lookup Match Output]" />
+            <path
+              refId="Package\ETL Fact_Appearances.Paths[OLE DB Source Output]"
+              endId="Package\ETL Fact_Appearances\Data Conversion.Inputs[Data Conversion Input]"
+              name="OLE DB Source Output"
+              startId="Package\ETL Fact_Appearances\READ data for Fact_Appearances.Outputs[OLE DB Source Output]" />
+          </paths>
+        </pipeline>
+      </DTS:ObjectData>
+    </DTS:Executable>
+  </DTS:Executables>
+  <DTS:PrecedenceConstraints>
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint]"
+      DTS:CreationName=""
+      DTS:DTSID="{76E9CB17-7230-445E-AB79-5BDA9555A992}"
+      DTS:From="Package\DROP and CREATE Fact_Appearances"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint"
+      DTS:To="Package\ETL Fact_Appearances" />
+  </DTS:PrecedenceConstraints>
+  <DTS:DesignTimeProperties><![CDATA[<?xml version="1.0"?>
+<!--This CDATA section contains the layout information of the package. The section includes information such as (x,y) coordinates, width, and height.-->
+<!--If you manually edit this section and make a mistake, you can delete it. -->
+<!--The package will still be able to load normally but the previous layout information will be lost and the designer will automatically re-arrange the elements on the design surface.-->
+<Objects
+  Version="8">
+  <!--Each node below will contain properties that do not affect runtime behavior.-->
+  <Package
+    design-time-name="Package">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
+        <NodeLayout
+          Size="263.2,41.6"
+          Id="Package\DROP and CREATE Fact_Appearances"
+          TopLeft="71.3333297363588,42.7666664075189" />
+        <NodeLayout
+          Size="187.2,41.6"
+          Id="Package\ETL Fact_Appearances"
+          TopLeft="89.999995082617,153.399998933276" />
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint]"
+          TopLeft="202.933329736359,84.3666664075189">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="-19.3333346537417,69.0333325257566"
+              Start="0,0"
+              End="-19.3333346537417,61.5333325257566">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,30.5166662628783" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,30.5166662628783"
+                    Point2="0,34.5166662628783"
+                    Point3="-4,34.5166662628783" />
+                  <mssgle:LineSegment
+                    End="-15.3333346537417,34.5166662628783" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-15.3333346537417,34.5166662628783"
+                    Point2="-19.3333346537417,34.5166662628783"
+                    Point3="-19.3333346537417,38.5166662628783" />
+                  <mssgle:LineSegment
+                    End="-19.3333346537417,61.5333325257566" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+      </GraphLayout>
+    </LayoutInfo>
+  </Package>
+  <TaskHost
+    design-time-name="Package\ETL Fact_Appearances">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="16" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
+        <NodeLayout
+          Size="235.2,41.6"
+          Id="Package\ETL Fact_Appearances\READ data for Fact_Appearances"
+          TopLeft="79.1666623411909,24.2666664979193" />
+        <NodeLayout
+          Size="156,41.6"
+          Id="Package\ETL Fact_Appearances\Data Conversion"
+          TopLeft="52.4999971315265,101.399999294877" />
+        <EdgeLayout
+          Id="Package\ETL Fact_Appearances.Paths[OLE DB Source Output]"
+          TopLeft="196.766662341191,65.8666664979193">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="-66.2666652096644,35.5333327969578"
+              Start="0,0"
+              End="-66.2666652096644,28.0333327969578">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,13.7666663984789" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,13.7666663984789"
+                    Point2="0,17.7666663984789"
+                    Point3="-4,17.7666663984789" />
+                  <mssgle:LineSegment
+                    End="-62.2666652096644,17.7666663984789" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-62.2666652096644,17.7666663984789"
+                    Point2="-66.2666652096644,17.7666663984789"
+                    Point3="-66.2666652096644,21.7666663984789" />
+                  <mssgle:LineSegment
+                    End="-66.2666652096644,28.0333327969578" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <NodeLayout
+          Size="152,41.6"
+          Id="Package\ETL Fact_Appearances\JOIN player_sid"
+          TopLeft="64.9999964485567,198.466665286554" />
+        <EdgeLayout
+          Id="Package\ETL Fact_Appearances.Paths[Data Conversion Output]"
+          TopLeft="130.499997131526,142.999999294877">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="-13.5000006829698,55.4666659916771"
+              Start="0,0"
+              End="-13.5000006829698,47.9666659916771">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,28.9333329325583" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,28.9333329325583"
+                    Point2="0,32.9333329325583"
+                    Point3="-4,32.9333329325583" />
+                  <mssgle:LineSegment
+                    End="-9.50000068296981,32.9333329325583" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-9.50000068296981,32.9333329325583"
+                    Point2="-13.5000006829698,32.9333329325583"
+                    Point3="-13.5000006829698,36.9333329325583" />
+                  <mssgle:LineSegment
+                    End="-13.5000006829698,47.9666659916771" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <NodeLayout
+          Size="143.2,41.6"
+          Id="Package\ETL Fact_Appearances\JOIN club_sid"
+          TopLeft="64.9999964485566,286.866664671832" />
+        <EdgeLayout
+          Id="Package\ETL Fact_Appearances.Paths[Lookup Match Output]"
+          TopLeft="138.799996448557,240.066665286554">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,46.7999993852775"
+              Start="0,0"
+              End="0,39.2999993852775">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,39.2999993852775" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="-48.19138671875,13.8453121926388,96.3827734375,11.609375"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <NodeLayout
+          Size="144,41.6"
+          Id="Package\ETL Fact_Appearances\JOIN date_sid"
+          TopLeft="302.499983472129,181.999998734395" />
+        <NodeLayout
+          Size="162.4,41.6"
+          Id="Package\ETL Fact_Appearances\CALCULATE date"
+          TopLeft="265.833318808841,279.066664726072" />
+        <EdgeLayout
+          Id="Package\ETL Fact_Appearances.Paths[Lookup Match Output1]"
+          TopLeft="208.199996448557,303.766664698952">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="57.6333223602845,0"
+              Start="0,0"
+              End="50.1333223602845,0">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="50.1333223602845,0" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="-23.1247255386078,5,96.3827734375,11.609375"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\ETL Fact_Appearances.Paths[Derived Column Output]"
+          TopLeft="347.033318808841,279.066664726072">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="27.466664663288,-55.4666659916771"
+              Start="0,0"
+              End="27.466664663288,-47.9666659916771">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,-23.7333329958386" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,-23.7333329958386"
+                    Point2="0,-27.7333329958386"
+                    Point3="4,-27.7333329958386" />
+                  <mssgle:LineSegment
+                    End="23.466664663288,-27.7333329958386" />
+                  <mssgle:CubicBezierSegment
+                    Point1="23.466664663288,-27.7333329958386"
+                    Point2="27.466664663288,-27.7333329958386"
+                    Point3="27.466664663288,-31.7333329958386" />
+                  <mssgle:LineSegment
+                    End="27.466664663288,-47.9666659916771" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <NodeLayout
+          Size="230.4,41.6"
+          Id="Package\ETL Fact_Appearances\LOAD data in Fact_Appearances"
+          TopLeft="522.49997145186,104.333332724637" />
+        <NodeLayout
+          Size="177.6,41.6"
+          Id="Package\ETL Fact_Appearances\JOIN competition_sid"
+          TopLeft="514.999971861642,255.133331675993" />
+        <EdgeLayout
+          Id="Package\ETL Fact_Appearances.Paths[Lookup Match Output2]"
+          TopLeft="397.166650138796,223.599998734395">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="178.36665505618,31.5333329415984"
+              Start="0,0"
+              End="178.36665505618,24.0333329415984">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,11.8070790175936" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,11.8070790175936"
+                    Point2="0,15.8070790175936"
+                    Point3="4,15.8070790175936" />
+                  <mssgle:LineSegment
+                    End="174.36665505618,15.8070790175936" />
+                  <mssgle:CubicBezierSegment
+                    Point1="174.36665505618,15.8070790175936"
+                    Point2="178.36665505618,15.8070790175936"
+                    Point3="178.36665505618,19.8070790175936" />
+                  <mssgle:LineSegment
+                    End="178.36665505618,24.0333329415984" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="40.9919408093398,20.8070790175936,96.3827734375,11.609375"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\ETL Fact_Appearances.Paths[Lookup Match Output3]"
+          TopLeft="634.883304990084,255.133331675993">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,-109.199998951356"
+              Start="0,0"
+              End="0,-101.699998951356">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,-101.699998951356" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="-48.19138671875,-56.6546869756778,96.3827734375,11.609375"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+      </GraphLayout>
+    </LayoutInfo>
+  </TaskHost>
+  <PipelineComponentMetadata
+    design-time-name="Package\ETL Fact_Appearances\READ data for Fact_Appearances">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+      <Property>
+        <Name>TableInfoObjectType</Name>
+        <Value
+          type="q2:string">Table</Value>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <PipelineComponentMetadata
+    design-time-name="Package\ETL Fact_Appearances\JOIN player_sid">
+    <Properties>
+      <Property>
+        <Name>OverwriteParamsSQLProp</Name>
+        <Value
+          type="q2:boolean">false</Value>
+      </Property>
+      <Property>
+        <Name>UsedTableName</Name>
+        <Value
+          type="q3:string">[dbo].[Dim_Player]</Value>
+      </Property>
+      <Property>
+        <Name>TableInfoObjectType</Name>
+        <Value
+          type="q4:int">0</Value>
+      </Property>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <PipelineComponentMetadata
+    design-time-name="Package\ETL Fact_Appearances\JOIN club_sid">
+    <Properties>
+      <Property>
+        <Name>OverwriteParamsSQLProp</Name>
+        <Value
+          type="q2:boolean">false</Value>
+      </Property>
+      <Property>
+        <Name>UsedTableName</Name>
+        <Value
+          type="q3:string">[dbo].[Dim_Club]</Value>
+      </Property>
+      <Property>
+        <Name>TableInfoObjectType</Name>
+        <Value
+          type="q4:int">0</Value>
+      </Property>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <PipelineComponentMetadata
+    design-time-name="Package\ETL Fact_Appearances\JOIN date_sid">
+    <Properties>
+      <Property>
+        <Name>OverwriteParamsSQLProp</Name>
+        <Value
+          type="q2:boolean">false</Value>
+      </Property>
+      <Property>
+        <Name>UsedTableName</Name>
+        <Value
+          type="q3:string">[dbo].[Dim_Date]</Value>
+      </Property>
+      <Property>
+        <Name>TableInfoObjectType</Name>
+        <Value
+          type="q4:int">0</Value>
+      </Property>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <PipelineComponentMetadata
+    design-time-name="Package\ETL Fact_Appearances\LOAD data in Fact_Appearances">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+      <Property>
+        <Name>TableInfoObjectType</Name>
+        <Value
+          type="q2:string">Table</Value>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <PipelineComponentMetadata
+    design-time-name="Package\ETL Fact_Appearances\JOIN competition_sid">
+    <Properties>
+      <Property>
+        <Name>OverwriteParamsSQLProp</Name>
+        <Value
+          type="q2:boolean">false</Value>
+      </Property>
+      <Property>
+        <Name>UsedTableName</Name>
+        <Value
+          type="q3:string">[dbo].[Dim_Competition]</Value>
+      </Property>
+      <Property>
+        <Name>TableInfoObjectType</Name>
+        <Value
+          type="q4:int">0</Value>
+      </Property>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+</Objects>]]></DTS:DesignTimeProperties>
+</DTS:Executable>

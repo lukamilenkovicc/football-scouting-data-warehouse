@@ -1,0 +1,2217 @@
+<?xml version="1.0"?>
+<DTS:Executable xmlns:DTS="www.microsoft.com/SqlServer/Dts"
+  DTS:refId="Package"
+  DTS:CreationDate="6/13/2026 10:13:18 AM"
+  DTS:CreationName="Microsoft.Package"
+  DTS:CreatorComputerName="DESKTOP-TVVRCUR"
+  DTS:CreatorName="DESKTOP-TVVRCUR\Korisnik"
+  DTS:DTSID="{6BC4BDC0-F8DE-4E50-B6CF-AE565720A03B}"
+  DTS:ExecutableType="Microsoft.Package"
+  DTS:LastModifiedProductVersion="17.0.1016.0"
+  DTS:LocaleID="1033"
+  DTS:ObjectName="Package1"
+  DTS:PackageType="5"
+  DTS:VersionBuild="41"
+  DTS:VersionGUID="{AAE84C9A-9D91-4EB7-AAEA-F732594697EB}">
+  <DTS:Property
+    DTS:Name="PackageFormatVersion">8</DTS:Property>
+  <DTS:Variables />
+  <DTS:Executables>
+    <DTS:Executable
+      DTS:refId="Package\DROP and CREATE Dim_Player"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:Description="Execute SQL Task"
+      DTS:DTSID="{A703896F-3397-4EE2-8C67-47D398588EBB}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="DROP and CREATE Dim_Player"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2025; © 2025 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{48255525-DF27-4D39-9F96-F9E61C00D4D5}"
+          SQLTask:SqlStatementSource="&#xA;IF EXISTS&#xA;&#x9;(SELECT *&#xA;&#x9;FROM INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS&#xA;&#x9;WHERE CONSTRAINT_NAME = 'FK_Fact_Appearances_Dim_Player') -- Menjamo naziv Constraint-a&#xA;&#xA;BEGIN&#xA;&#x9;&#xA;&#x9;ALTER TABLE [dbo].[Fact_Appearances] DROP CONSTRAINT [FK_Fact_Appearances_Dim_Player] -- Menjamo ovu liniju&#xA;END;&#xA;&#xA;&#xA;&#xA;IF EXISTS&#xA;&#x9;(SELECT *&#xA;&#x9;FROM INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS&#xA;&#x9;WHERE CONSTRAINT_NAME = 'FK_Fact_Valuations_Dim_Player') -- Menjamo naziv Constraint-a&#xA;&#xA;BEGIN&#xA;&#x9;&#xA;&#x9;ALTER TABLE [dbo].[Fact_Valuations] DROP CONSTRAINT [FK_Fact_Valuations_Dim_Player] -- Menjamo ovu liniju&#xA;END;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;IF EXISTS&#xA;&#x9;(SELECT *&#xA;&#x9;FROM sysobjects&#xA;&#x9;WHERE id = OBJECT_ID(N'Dim_Player')) -- Menjamo naziv tabele&#xA;BEGIN&#xA;&#x9;-- KOMANDA ZA DROP TABLE&#xA;&#x9;IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Dim_Player]') AND type in (N'U'))&#xA;&#x9;DROP TABLE [dbo].[Dim_Player]&#xA;&#xA;&#xA;&#x9;-- KOMANDA ZA CREATE TABLE&#xA;CREATE TABLE [dbo].[Dim_Player](&#xA;&#x9;[player_sid] [int] IDENTITY(1,1) NOT NULL,&#xA;&#x9;[player_id] [int] NULL,&#xA;&#x9;[first_name] [nvarchar](80) NOT NULL,&#xA;&#x9;[last_name] [nvarchar](80) NOT NULL,&#xA;&#x9;[date_of_birth] [date] NULL,&#xA;&#x9;[position_sid] [int] NULL,&#xA;&#x9;[foot] [varchar](10) NULL,&#xA;&#x9;[height_cm] [int] NULL,&#xA;&#x9;[contract_expiration] [date] NULL,&#xA;&#x9;[last_season] [int] NULL,&#xA;PRIMARY KEY CLUSTERED &#xA;(&#xA;&#x9;[player_sid] ASC&#xA;)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]&#xA;) ON [PRIMARY]&#xA;&#xA;&#xA;&#xA;ALTER TABLE [dbo].[Dim_Player]  WITH CHECK ADD  CONSTRAINT [CHK_Player_Height] CHECK  (([height_cm]&gt;=(140) AND [height_cm]&lt;=(230)) OR [height_cm]=(-1))&#xA;&#xA;&#xA;&#xA;&#xA;ALTER TABLE [dbo].[Dim_Player] CHECK CONSTRAINT [CHK_Player_Height]&#xA;&#xA;&#xA;&#xA;END&#xA;&#xA;&#xA;&#xA;&#xA;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\ETL Dim_Player"
+      DTS:CreationName="Microsoft.Pipeline"
+      DTS:Description="Data Flow Task"
+      DTS:DTSID="{07D948EC-D0D5-4433-AEBC-A0CD64D8809C}"
+      DTS:ExecutableType="Microsoft.Pipeline"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="ETL Dim_Player"
+      DTS:TaskContact="Performs high-performance data extraction, transformation and loading;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <pipeline
+          version="1">
+          <components>
+            <component
+              refId="Package\ETL Dim_Player\CLEANING and TRANSFORM"
+              componentClassID="Microsoft.DerivedColumn"
+              contactInfo="Derived Column;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;0"
+              description="Creates new column values by applying expressions to transformation input columns. Create new columns or overwrite existing ones. For example, concatenate the values from the 'first name' and 'last name' column to make a 'full name' column."
+              name="CLEANING and TRANSFORM"
+              usesDispositions="true">
+              <inputs>
+                <input
+                  refId="Package\ETL Dim_Player\CLEANING and TRANSFORM.Inputs[Derived Column Input]"
+                  description="Input to the Derived Column Transformation"
+                  name="Derived Column Input">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\ETL Dim_Player\CLEANING and TRANSFORM.Inputs[Derived Column Input].Columns[first_name]"
+                      cachedDataType="wstr"
+                      cachedLength="150"
+                      cachedName="first_name"
+                      errorOrTruncationOperation="Computation"
+                      errorRowDisposition="FailComponent"
+                      lineageId="Package\ETL Dim_Player\Union All.Outputs[Union All Output 1].Columns[first_name]"
+                      truncationRowDisposition="FailComponent"
+                      usageType="readWrite">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.String"
+                          description="Derived Column Expression"
+                          name="Expression">[ISNULL](#{Package\ETL Dim_Player\Union All.Outputs[Union All Output 1].Columns[first_name]}) ? "" : #{Package\ETL Dim_Player\Union All.Outputs[Union All Output 1].Columns[first_name]}</property>
+                        <property
+                          containsID="true"
+                          dataType="System.String"
+                          description="Derived Column Friendly Expression"
+                          expressionType="Notify"
+                          name="FriendlyExpression">ISNULL(first_name) ? "" : first_name</property>
+                      </properties>
+                    </inputColumn>
+                    <inputColumn
+                      refId="Package\ETL Dim_Player\CLEANING and TRANSFORM.Inputs[Derived Column Input].Columns[last_name]"
+                      cachedDataType="wstr"
+                      cachedLength="150"
+                      cachedName="last_name"
+                      errorOrTruncationOperation="Computation"
+                      errorRowDisposition="FailComponent"
+                      lineageId="Package\ETL Dim_Player\Union All.Outputs[Union All Output 1].Columns[last_name]"
+                      truncationRowDisposition="FailComponent"
+                      usageType="readWrite">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.String"
+                          description="Derived Column Expression"
+                          name="Expression">[TRIM](#{Package\ETL Dim_Player\Union All.Outputs[Union All Output 1].Columns[last_name]})</property>
+                        <property
+                          containsID="true"
+                          dataType="System.String"
+                          description="Derived Column Friendly Expression"
+                          expressionType="Notify"
+                          name="FriendlyExpression">TRIM(last_name)</property>
+                      </properties>
+                    </inputColumn>
+                    <inputColumn
+                      refId="Package\ETL Dim_Player\CLEANING and TRANSFORM.Inputs[Derived Column Input].Columns[foot]"
+                      cachedDataType="wstr"
+                      cachedLength="50"
+                      cachedName="foot"
+                      errorOrTruncationOperation="Computation"
+                      errorRowDisposition="FailComponent"
+                      lineageId="Package\ETL Dim_Player\Union All.Outputs[Union All Output 1].Columns[foot]"
+                      truncationRowDisposition="FailComponent"
+                      usageType="readWrite">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.String"
+                          description="Derived Column Expression"
+                          name="Expression">[ISNULL](#{Package\ETL Dim_Player\Union All.Outputs[Union All Output 1].Columns[foot]}) ? "Unknown" : #{Package\ETL Dim_Player\Union All.Outputs[Union All Output 1].Columns[foot]}</property>
+                        <property
+                          containsID="true"
+                          dataType="System.String"
+                          description="Derived Column Friendly Expression"
+                          expressionType="Notify"
+                          name="FriendlyExpression">ISNULL(foot) ? "Unknown" : foot</property>
+                      </properties>
+                    </inputColumn>
+                    <inputColumn
+                      refId="Package\ETL Dim_Player\CLEANING and TRANSFORM.Inputs[Derived Column Input].Columns[height_cm]"
+                      cachedDataType="wstr"
+                      cachedLength="50"
+                      cachedName="height_cm"
+                      errorOrTruncationOperation="Computation"
+                      errorRowDisposition="FailComponent"
+                      lineageId="Package\ETL Dim_Player\Union All.Outputs[Union All Output 1].Columns[height_cm]"
+                      truncationRowDisposition="FailComponent"
+                      usageType="readWrite">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.String"
+                          description="Derived Column Expression"
+                          name="Expression">[ISNULL](#{Package\ETL Dim_Player\Union All.Outputs[Union All Output 1].Columns[height_cm]}) || [TRIM](#{Package\ETL Dim_Player\Union All.Outputs[Union All Output 1].Columns[height_cm]}) == "" ? -1 : (DT_I4)#{Package\ETL Dim_Player\Union All.Outputs[Union All Output 1].Columns[height_cm]}</property>
+                        <property
+                          containsID="true"
+                          dataType="System.String"
+                          description="Derived Column Friendly Expression"
+                          expressionType="Notify"
+                          name="FriendlyExpression">ISNULL(height_cm) || TRIM(height_cm) == "" ? -1 : (DT_I4)height_cm</property>
+                      </properties>
+                    </inputColumn>
+                    <inputColumn
+                      refId="Package\ETL Dim_Player\CLEANING and TRANSFORM.Inputs[Derived Column Input].Columns[date_of_birth]"
+                      cachedDataType="wstr"
+                      cachedLength="50"
+                      cachedName="date_of_birth"
+                      errorOrTruncationOperation="Computation"
+                      errorRowDisposition="FailComponent"
+                      lineageId="Package\ETL Dim_Player\Union All.Outputs[Union All Output 1].Columns[date_of_birth]"
+                      truncationRowDisposition="FailComponent"
+                      usageType="readWrite">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.String"
+                          description="Derived Column Expression"
+                          name="Expression">[SUBSTRING](#{Package\ETL Dim_Player\Union All.Outputs[Union All Output 1].Columns[date_of_birth]},1,10)</property>
+                        <property
+                          containsID="true"
+                          dataType="System.String"
+                          description="Derived Column Friendly Expression"
+                          expressionType="Notify"
+                          name="FriendlyExpression">SUBSTRING(date_of_birth,1,10)</property>
+                      </properties>
+                    </inputColumn>
+                    <inputColumn
+                      refId="Package\ETL Dim_Player\CLEANING and TRANSFORM.Inputs[Derived Column Input].Columns[contract_expiration]"
+                      cachedDataType="wstr"
+                      cachedLength="50"
+                      cachedName="contract_expiration"
+                      errorOrTruncationOperation="Computation"
+                      errorRowDisposition="FailComponent"
+                      lineageId="Package\ETL Dim_Player\Union All.Outputs[Union All Output 1].Columns[contract_expiration]"
+                      truncationRowDisposition="FailComponent"
+                      usageType="readWrite">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.String"
+                          description="Derived Column Expression"
+                          name="Expression">[SUBSTRING](#{Package\ETL Dim_Player\Union All.Outputs[Union All Output 1].Columns[contract_expiration]},1,10)</property>
+                        <property
+                          containsID="true"
+                          dataType="System.String"
+                          description="Derived Column Friendly Expression"
+                          expressionType="Notify"
+                          name="FriendlyExpression">SUBSTRING(contract_expiration,1,10)</property>
+                      </properties>
+                    </inputColumn>
+                    <inputColumn
+                      refId="Package\ETL Dim_Player\CLEANING and TRANSFORM.Inputs[Derived Column Input].Columns[position]"
+                      cachedDataType="wstr"
+                      cachedLength="100"
+                      cachedName="position"
+                      lineageId="Package\ETL Dim_Player\Union All.Outputs[Union All Output 1].Columns[position]" />
+                    <inputColumn
+                      refId="Package\ETL Dim_Player\CLEANING and TRANSFORM.Inputs[Derived Column Input].Columns[position_sid]"
+                      cachedDataType="i4"
+                      cachedName="position_sid"
+                      errorOrTruncationOperation="Computation"
+                      errorRowDisposition="FailComponent"
+                      lineageId="Package\ETL Dim_Player\Union All.Outputs[Union All Output 1].Columns[position_sid]"
+                      truncationRowDisposition="FailComponent"
+                      usageType="readWrite">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.String"
+                          description="Derived Column Expression"
+                          name="Expression">#{Package\ETL Dim_Player\Union All.Outputs[Union All Output 1].Columns[position]} == "Missing" ? 1 : #{Package\ETL Dim_Player\Union All.Outputs[Union All Output 1].Columns[position_sid]}</property>
+                        <property
+                          containsID="true"
+                          dataType="System.String"
+                          description="Derived Column Friendly Expression"
+                          expressionType="Notify"
+                          name="FriendlyExpression">position == "Missing" ? 1 : position_sid</property>
+                      </properties>
+                    </inputColumn>
+                  </inputColumns>
+                  <externalMetadataColumns />
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\ETL Dim_Player\CLEANING and TRANSFORM.Outputs[Derived Column Output]"
+                  description="Default Output of the Derived Column Transformation"
+                  exclusionGroup="1"
+                  name="Derived Column Output"
+                  synchronousInputId="Package\ETL Dim_Player\CLEANING and TRANSFORM.Inputs[Derived Column Input]">
+                  <externalMetadataColumns />
+                </output>
+                <output
+                  refId="Package\ETL Dim_Player\CLEANING and TRANSFORM.Outputs[Derived Column Error Output]"
+                  description="Error Output of the Derived Column Transformation"
+                  exclusionGroup="1"
+                  isErrorOut="true"
+                  name="Derived Column Error Output"
+                  synchronousInputId="Package\ETL Dim_Player\CLEANING and TRANSFORM.Inputs[Derived Column Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\ETL Dim_Player\CLEANING and TRANSFORM.Outputs[Derived Column Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\ETL Dim_Player\CLEANING and TRANSFORM.Outputs[Derived Column Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\ETL Dim_Player\CLEANING and TRANSFORM.Outputs[Derived Column Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\ETL Dim_Player\CLEANING and TRANSFORM.Outputs[Derived Column Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\ETL Dim_Player\Data Conversion"
+              componentClassID="Microsoft.DataConvert"
+              contactInfo="Data Conversion;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;0"
+              description="Data Conversion"
+              name="Data Conversion"
+              usesDispositions="true">
+              <inputs>
+                <input
+                  refId="Package\ETL Dim_Player\Data Conversion.Inputs[Data Conversion Input]"
+                  name="Data Conversion Input">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\ETL Dim_Player\Data Conversion.Inputs[Data Conversion Input].Columns[player_id]"
+                      cachedDataType="wstr"
+                      cachedLength="50"
+                      cachedName="player_id"
+                      lineageId="Package\ETL Dim_Player\Union All.Outputs[Union All Output 1].Columns[player_id]" />
+                    <inputColumn
+                      refId="Package\ETL Dim_Player\Data Conversion.Inputs[Data Conversion Input].Columns[first_name]"
+                      cachedDataType="wstr"
+                      cachedLength="150"
+                      cachedName="first_name"
+                      lineageId="Package\ETL Dim_Player\Union All.Outputs[Union All Output 1].Columns[first_name]" />
+                    <inputColumn
+                      refId="Package\ETL Dim_Player\Data Conversion.Inputs[Data Conversion Input].Columns[last_name]"
+                      cachedDataType="wstr"
+                      cachedLength="150"
+                      cachedName="last_name"
+                      lineageId="Package\ETL Dim_Player\Union All.Outputs[Union All Output 1].Columns[last_name]" />
+                    <inputColumn
+                      refId="Package\ETL Dim_Player\Data Conversion.Inputs[Data Conversion Input].Columns[date_of_birth]"
+                      cachedDataType="wstr"
+                      cachedLength="50"
+                      cachedName="date_of_birth"
+                      lineageId="Package\ETL Dim_Player\Union All.Outputs[Union All Output 1].Columns[date_of_birth]" />
+                    <inputColumn
+                      refId="Package\ETL Dim_Player\Data Conversion.Inputs[Data Conversion Input].Columns[foot]"
+                      cachedDataType="wstr"
+                      cachedLength="50"
+                      cachedName="foot"
+                      lineageId="Package\ETL Dim_Player\Union All.Outputs[Union All Output 1].Columns[foot]" />
+                    <inputColumn
+                      refId="Package\ETL Dim_Player\Data Conversion.Inputs[Data Conversion Input].Columns[height_cm]"
+                      cachedDataType="wstr"
+                      cachedLength="50"
+                      cachedName="height_cm"
+                      lineageId="Package\ETL Dim_Player\Union All.Outputs[Union All Output 1].Columns[height_cm]" />
+                    <inputColumn
+                      refId="Package\ETL Dim_Player\Data Conversion.Inputs[Data Conversion Input].Columns[contract_expiration]"
+                      cachedDataType="wstr"
+                      cachedLength="50"
+                      cachedName="contract_expiration"
+                      lineageId="Package\ETL Dim_Player\Union All.Outputs[Union All Output 1].Columns[contract_expiration]" />
+                    <inputColumn
+                      refId="Package\ETL Dim_Player\Data Conversion.Inputs[Data Conversion Input].Columns[last_season]"
+                      cachedDataType="wstr"
+                      cachedLength="50"
+                      cachedName="last_season"
+                      lineageId="Package\ETL Dim_Player\Union All.Outputs[Union All Output 1].Columns[last_season]" />
+                    <inputColumn
+                      refId="Package\ETL Dim_Player\Data Conversion.Inputs[Data Conversion Input].Columns[position_sid]"
+                      cachedDataType="i4"
+                      cachedName="position_sid"
+                      lineageId="Package\ETL Dim_Player\Union All.Outputs[Union All Output 1].Columns[position_sid]" />
+                  </inputColumns>
+                  <externalMetadataColumns />
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\ETL Dim_Player\Data Conversion.Outputs[Data Conversion Output]"
+                  exclusionGroup="1"
+                  name="Data Conversion Output"
+                  synchronousInputId="Package\ETL Dim_Player\Data Conversion.Inputs[Data Conversion Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\ETL Dim_Player\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of date_of_birth]"
+                      dataType="dbDate"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      lineageId="Package\ETL Dim_Player\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of date_of_birth]"
+                      name="Copy of date_of_birth"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="Specifies the input column used as the source of data for the conversion."
+                          name="SourceInputColumnLineageID">#{Package\ETL Dim_Player\Union All.Outputs[Union All Output 1].Columns[date_of_birth]}</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                          name="FastParse">false</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\ETL Dim_Player\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of contract_expiration]"
+                      dataType="dbDate"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      lineageId="Package\ETL Dim_Player\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of contract_expiration]"
+                      name="Copy of contract_expiration"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="Specifies the input column used as the source of data for the conversion."
+                          name="SourceInputColumnLineageID">#{Package\ETL Dim_Player\Union All.Outputs[Union All Output 1].Columns[contract_expiration]}</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                          name="FastParse">false</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\ETL Dim_Player\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of player_id]"
+                      dataType="i4"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      lineageId="Package\ETL Dim_Player\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of player_id]"
+                      name="Copy of player_id"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="Specifies the input column used as the source of data for the conversion."
+                          name="SourceInputColumnLineageID">#{Package\ETL Dim_Player\Union All.Outputs[Union All Output 1].Columns[player_id]}</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                          name="FastParse">false</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\ETL Dim_Player\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of height_cm]"
+                      dataType="i4"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      lineageId="Package\ETL Dim_Player\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of height_cm]"
+                      name="Copy of height_cm"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="Specifies the input column used as the source of data for the conversion."
+                          name="SourceInputColumnLineageID">#{Package\ETL Dim_Player\Union All.Outputs[Union All Output 1].Columns[height_cm]}</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                          name="FastParse">false</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\ETL Dim_Player\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of last_season]"
+                      dataType="i4"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      lineageId="Package\ETL Dim_Player\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of last_season]"
+                      name="Copy of last_season"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="Specifies the input column used as the source of data for the conversion."
+                          name="SourceInputColumnLineageID">#{Package\ETL Dim_Player\Union All.Outputs[Union All Output 1].Columns[last_season]}</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                          name="FastParse">false</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\ETL Dim_Player\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of position_sid]"
+                      dataType="i4"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      lineageId="Package\ETL Dim_Player\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of position_sid]"
+                      name="Copy of position_sid"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="Specifies the input column used as the source of data for the conversion."
+                          name="SourceInputColumnLineageID">#{Package\ETL Dim_Player\Union All.Outputs[Union All Output 1].Columns[position_sid]}</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                          name="FastParse">false</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\ETL Dim_Player\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of foot]"
+                      codePage="1252"
+                      dataType="str"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      length="10"
+                      lineageId="Package\ETL Dim_Player\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of foot]"
+                      name="Copy of foot"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="Specifies the input column used as the source of data for the conversion."
+                          name="SourceInputColumnLineageID">#{Package\ETL Dim_Player\Union All.Outputs[Union All Output 1].Columns[foot]}</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                          name="FastParse">false</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\ETL Dim_Player\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of first_name]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      length="80"
+                      lineageId="Package\ETL Dim_Player\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of first_name]"
+                      name="Copy of first_name"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="Specifies the input column used as the source of data for the conversion."
+                          name="SourceInputColumnLineageID">#{Package\ETL Dim_Player\Union All.Outputs[Union All Output 1].Columns[first_name]}</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                          name="FastParse">false</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\ETL Dim_Player\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of last_name]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      length="80"
+                      lineageId="Package\ETL Dim_Player\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of last_name]"
+                      name="Copy of last_name"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="Specifies the input column used as the source of data for the conversion."
+                          name="SourceInputColumnLineageID">#{Package\ETL Dim_Player\Union All.Outputs[Union All Output 1].Columns[last_name]}</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                          name="FastParse">false</property>
+                      </properties>
+                    </outputColumn>
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+                <output
+                  refId="Package\ETL Dim_Player\Data Conversion.Outputs[Data Conversion Error Output]"
+                  exclusionGroup="1"
+                  isErrorOut="true"
+                  name="Data Conversion Error Output"
+                  synchronousInputId="Package\ETL Dim_Player\Data Conversion.Inputs[Data Conversion Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\ETL Dim_Player\Data Conversion.Outputs[Data Conversion Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\ETL Dim_Player\Data Conversion.Outputs[Data Conversion Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\ETL Dim_Player\Data Conversion.Outputs[Data Conversion Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\ETL Dim_Player\Data Conversion.Outputs[Data Conversion Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\ETL Dim_Player\JOIN position_sid"
+              componentClassID="Microsoft.Lookup"
+              contactInfo="Lookup;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;6"
+              description="Joins additional columns to the data flow by looking up values in a table. For example, join to the 'employee id' column the employees table to get 'hire date' and 'employee name'. We recommend this transformation when the lookup table can fit into memory."
+              name="JOIN position_sid"
+              usesDispositions="true"
+              version="6">
+              <properties>
+                <property
+                  dataType="System.String"
+                  description="Specifies the SQL statement that generates the lookup table."
+                  expressionType="Notify"
+                  name="SqlCommand"
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor">select * from [dbo].[Dim_Position]</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies a SQL statement that uses parameters to generate the lookup table."
+                  expressionType="Notify"
+                  name="SqlCommandParam"
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor">select * from (select * from [dbo].[Dim_Position]) [refTable]
+where [refTable].[position_name] = ?</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the type of connection used to access the reference dataset."
+                  name="ConnectionType"
+                  typeConverter="LookupConnectionType">0</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the cache type of the lookup table."
+                  name="CacheType"
+                  typeConverter="CacheType">0</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies how the Lookup transformation handles rows without matching entries in the reference data set."
+                  name="NoMatchBehavior"
+                  typeConverter="LookupNoMatchBehavior">1</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the percentage of the cache that is allocated for rows with no matching entries in the reference dataset."
+                  name="NoMatchCachePercentage">0</property>
+                <property
+                  dataType="System.Int32"
+                  description="Maximum Memory Usage for Reference Cache on a 32 bit platform."
+                  name="MaxMemoryUsage">25</property>
+                <property
+                  dataType="System.Int64"
+                  description="Maximum Memory Usage for Reference Cache on a 64 bit platform."
+                  name="MaxMemoryUsage64">25</property>
+                <property
+                  dataType="System.String"
+                  description="Indicates whether to reference metadata in an XML format."
+                  name="ReferenceMetadataXml">&lt;referenceMetadata&gt;&lt;referenceColumns&gt;&lt;referenceColumn name="position_sid" dataType="DT_I4" length="0" precision="0" scale="0" codePage="0"/&gt;&lt;referenceColumn name="position_name" dataType="DT_WSTR" length="50" precision="0" scale="0" codePage="0"/&gt;&lt;referenceColumn name="position_code" dataType="DT_STR" length="10" precision="0" scale="0" codePage="1252"/&gt;&lt;referenceColumn name="position_group" dataType="DT_STR" length="10" precision="0" scale="0" codePage="1252"/&gt;&lt;/referenceColumns&gt;&lt;/referenceMetadata&gt;</property>
+                <property
+                  containsID="true"
+                  dataType="System.String"
+                  description="Specifies the list of lineage identifiers that map to the parameters that the SQL statement in the SQLCommand property uses. Entries in the list are separated by semicolons."
+                  name="ParameterMap">#{Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Output].Columns[position]};</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the column code page to use when code page information is unavailable from the data source."
+                  name="DefaultCodePage">1252</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Determines whether duplicate keys in the reference data should be treated as errors when full cache mode is used."
+                  name="TreatDuplicateKeysAsError">false</property>
+              </properties>
+              <connections>
+                <connection
+                  refId="Package\ETL Dim_Player\JOIN position_sid.Connections[OleDbConnection]"
+                  connectionManagerID="{48255525-DF27-4D39-9F96-F9E61C00D4D5}:external"
+                  connectionManagerRefId="Project.ConnectionManagers[DESKTOP-TVVRCUR_SQLEXPRESS.FootballScoutingDW]"
+                  description="Connection manager used to access lookup data."
+                  name="OleDbConnection" />
+              </connections>
+              <inputs>
+                <input
+                  refId="Package\ETL Dim_Player\JOIN position_sid.Inputs[Lookup Input]"
+                  name="Lookup Input">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\ETL Dim_Player\JOIN position_sid.Inputs[Lookup Input].Columns[position]"
+                      cachedDataType="wstr"
+                      cachedLength="100"
+                      cachedName="position"
+                      lineageId="Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Output].Columns[position]">
+                      <properties>
+                        <property
+                          dataType="System.String"
+                          description="Specifies the column in the reference table that a column joins."
+                          name="JoinToReferenceColumn">position_name</property>
+                        <property
+                          dataType="System.Null"
+                          description="Specifies the column in the reference table from which a column is copied."
+                          name="CopyFromReferenceColumn" />
+                      </properties>
+                    </inputColumn>
+                  </inputColumns>
+                  <externalMetadataColumns />
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\ETL Dim_Player\JOIN position_sid.Outputs[Lookup Match Output]"
+                  errorOrTruncationOperation="Lookup"
+                  exclusionGroup="1"
+                  name="Lookup Match Output"
+                  synchronousInputId="Package\ETL Dim_Player\JOIN position_sid.Inputs[Lookup Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\ETL Dim_Player\JOIN position_sid.Outputs[Lookup Match Output].Columns[position_sid]"
+                      dataType="i4"
+                      errorOrTruncationOperation="Copy Column"
+                      lineageId="Package\ETL Dim_Player\JOIN position_sid.Outputs[Lookup Match Output].Columns[position_sid]"
+                      name="position_sid"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          dataType="System.String"
+                          description="Specifies the column in the reference table from which a column is copied."
+                          name="CopyFromReferenceColumn">position_sid</property>
+                      </properties>
+                    </outputColumn>
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+                <output
+                  refId="Package\ETL Dim_Player\JOIN position_sid.Outputs[Lookup No Match Output]"
+                  description="The Lookup output that handles rows with no matching entries in the reference dataset. Use this output when the NoMatchBehavior property is set to &quot;Send rows with no matching entries to the no match output.&quot;"
+                  exclusionGroup="1"
+                  name="Lookup No Match Output"
+                  synchronousInputId="Package\ETL Dim_Player\JOIN position_sid.Inputs[Lookup Input]">
+                  <externalMetadataColumns />
+                </output>
+                <output
+                  refId="Package\ETL Dim_Player\JOIN position_sid.Outputs[Lookup Error Output]"
+                  exclusionGroup="1"
+                  isErrorOut="true"
+                  name="Lookup Error Output"
+                  synchronousInputId="Package\ETL Dim_Player\JOIN position_sid.Inputs[Lookup Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\ETL Dim_Player\JOIN position_sid.Outputs[Lookup Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\ETL Dim_Player\JOIN position_sid.Outputs[Lookup Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\ETL Dim_Player\JOIN position_sid.Outputs[Lookup Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\ETL Dim_Player\JOIN position_sid.Outputs[Lookup Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\ETL Dim_Player\LOAD data in Dim_Player"
+              componentClassID="Microsoft.OLEDBDestination"
+              contactInfo="OLE DB Destination;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;4"
+              description="OLE DB Destination"
+              name="LOAD data in Dim_Player"
+              usesDispositions="true"
+              version="4">
+              <properties>
+                <property
+                  dataType="System.Int32"
+                  description="The number of seconds before a command times out.  A value of 0 indicates an infinite time-out."
+                  name="CommandTimeout">0</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the name of the database object used to open a rowset."
+                  name="OpenRowset">[dbo].[Dim_Player]</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the variable that contains the name of the database object used to open a rowset."
+                  name="OpenRowsetVariable"></property>
+                <property
+                  dataType="System.String"
+                  description="The SQL command to be executed."
+                  name="SqlCommand"
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor"></property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the column code page to use when code page information is unavailable from the data source."
+                  name="DefaultCodePage">1252</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Forces the use of the DefaultCodePage property value when describing character data."
+                  name="AlwaysUseDefaultCodePage">false</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the mode used to access the database."
+                  name="AccessMode"
+                  typeConverter="AccessMode">3</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Indicates whether the values supplied for identity columns will be copied to the destination. If false, values for identity columns will be auto-generated at the destination. Applies only if fast load is turned on."
+                  name="FastLoadKeepIdentity">false</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Indicates whether the columns containing null will have null inserted in the destination. If false, columns containing null will have their default values inserted at the destination. Applies only if fast load is turned on."
+                  name="FastLoadKeepNulls">false</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies options to be used with fast load.  Applies only if fast load is turned on."
+                  name="FastLoadOptions">TABLOCK,CHECK_CONSTRAINTS</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies when commits are issued during data insertion.  A value of 0 specifies that one commit will be issued at the end of data insertion.  Applies only if fast load is turned on."
+                  name="FastLoadMaxInsertCommitSize">2147483647</property>
+              </properties>
+              <connections>
+                <connection
+                  refId="Package\ETL Dim_Player\LOAD data in Dim_Player.Connections[OleDbConnection]"
+                  connectionManagerID="{48255525-DF27-4D39-9F96-F9E61C00D4D5}:external"
+                  connectionManagerRefId="Project.ConnectionManagers[DESKTOP-TVVRCUR_SQLEXPRESS.FootballScoutingDW]"
+                  description="The OLE DB runtime connection used to access the database."
+                  name="OleDbConnection" />
+              </connections>
+              <inputs>
+                <input
+                  refId="Package\ETL Dim_Player\LOAD data in Dim_Player.Inputs[OLE DB Destination Input]"
+                  errorOrTruncationOperation="Insert"
+                  errorRowDisposition="FailComponent"
+                  hasSideEffects="true"
+                  name="OLE DB Destination Input">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\ETL Dim_Player\LOAD data in Dim_Player.Inputs[OLE DB Destination Input].Columns[Copy of player_id]"
+                      cachedDataType="i4"
+                      cachedName="Copy of player_id"
+                      externalMetadataColumnId="Package\ETL Dim_Player\LOAD data in Dim_Player.Inputs[OLE DB Destination Input].ExternalColumns[player_id]"
+                      lineageId="Package\ETL Dim_Player\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of player_id]" />
+                    <inputColumn
+                      refId="Package\ETL Dim_Player\LOAD data in Dim_Player.Inputs[OLE DB Destination Input].Columns[Copy of first_name]"
+                      cachedDataType="wstr"
+                      cachedLength="80"
+                      cachedName="Copy of first_name"
+                      externalMetadataColumnId="Package\ETL Dim_Player\LOAD data in Dim_Player.Inputs[OLE DB Destination Input].ExternalColumns[first_name]"
+                      lineageId="Package\ETL Dim_Player\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of first_name]" />
+                    <inputColumn
+                      refId="Package\ETL Dim_Player\LOAD data in Dim_Player.Inputs[OLE DB Destination Input].Columns[Copy of last_name]"
+                      cachedDataType="wstr"
+                      cachedLength="80"
+                      cachedName="Copy of last_name"
+                      externalMetadataColumnId="Package\ETL Dim_Player\LOAD data in Dim_Player.Inputs[OLE DB Destination Input].ExternalColumns[last_name]"
+                      lineageId="Package\ETL Dim_Player\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of last_name]" />
+                    <inputColumn
+                      refId="Package\ETL Dim_Player\LOAD data in Dim_Player.Inputs[OLE DB Destination Input].Columns[Copy of date_of_birth]"
+                      cachedDataType="dbDate"
+                      cachedName="Copy of date_of_birth"
+                      externalMetadataColumnId="Package\ETL Dim_Player\LOAD data in Dim_Player.Inputs[OLE DB Destination Input].ExternalColumns[date_of_birth]"
+                      lineageId="Package\ETL Dim_Player\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of date_of_birth]" />
+                    <inputColumn
+                      refId="Package\ETL Dim_Player\LOAD data in Dim_Player.Inputs[OLE DB Destination Input].Columns[Copy of position_sid]"
+                      cachedDataType="i4"
+                      cachedName="Copy of position_sid"
+                      externalMetadataColumnId="Package\ETL Dim_Player\LOAD data in Dim_Player.Inputs[OLE DB Destination Input].ExternalColumns[position_sid]"
+                      lineageId="Package\ETL Dim_Player\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of position_sid]" />
+                    <inputColumn
+                      refId="Package\ETL Dim_Player\LOAD data in Dim_Player.Inputs[OLE DB Destination Input].Columns[Copy of foot]"
+                      cachedCodepage="1252"
+                      cachedDataType="str"
+                      cachedLength="10"
+                      cachedName="Copy of foot"
+                      externalMetadataColumnId="Package\ETL Dim_Player\LOAD data in Dim_Player.Inputs[OLE DB Destination Input].ExternalColumns[foot]"
+                      lineageId="Package\ETL Dim_Player\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of foot]" />
+                    <inputColumn
+                      refId="Package\ETL Dim_Player\LOAD data in Dim_Player.Inputs[OLE DB Destination Input].Columns[Copy of height_cm]"
+                      cachedDataType="i4"
+                      cachedName="Copy of height_cm"
+                      externalMetadataColumnId="Package\ETL Dim_Player\LOAD data in Dim_Player.Inputs[OLE DB Destination Input].ExternalColumns[height_cm]"
+                      lineageId="Package\ETL Dim_Player\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of height_cm]" />
+                    <inputColumn
+                      refId="Package\ETL Dim_Player\LOAD data in Dim_Player.Inputs[OLE DB Destination Input].Columns[Copy of contract_expiration]"
+                      cachedDataType="dbDate"
+                      cachedName="Copy of contract_expiration"
+                      externalMetadataColumnId="Package\ETL Dim_Player\LOAD data in Dim_Player.Inputs[OLE DB Destination Input].ExternalColumns[contract_expiration]"
+                      lineageId="Package\ETL Dim_Player\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of contract_expiration]" />
+                    <inputColumn
+                      refId="Package\ETL Dim_Player\LOAD data in Dim_Player.Inputs[OLE DB Destination Input].Columns[Copy of last_season]"
+                      cachedDataType="i4"
+                      cachedName="Copy of last_season"
+                      externalMetadataColumnId="Package\ETL Dim_Player\LOAD data in Dim_Player.Inputs[OLE DB Destination Input].ExternalColumns[last_season]"
+                      lineageId="Package\ETL Dim_Player\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of last_season]" />
+                  </inputColumns>
+                  <externalMetadataColumns
+                    isUsed="True">
+                    <externalMetadataColumn
+                      refId="Package\ETL Dim_Player\LOAD data in Dim_Player.Inputs[OLE DB Destination Input].ExternalColumns[player_sid]"
+                      dataType="i4"
+                      name="player_sid" />
+                    <externalMetadataColumn
+                      refId="Package\ETL Dim_Player\LOAD data in Dim_Player.Inputs[OLE DB Destination Input].ExternalColumns[player_id]"
+                      dataType="i4"
+                      name="player_id" />
+                    <externalMetadataColumn
+                      refId="Package\ETL Dim_Player\LOAD data in Dim_Player.Inputs[OLE DB Destination Input].ExternalColumns[first_name]"
+                      dataType="wstr"
+                      length="80"
+                      name="first_name" />
+                    <externalMetadataColumn
+                      refId="Package\ETL Dim_Player\LOAD data in Dim_Player.Inputs[OLE DB Destination Input].ExternalColumns[last_name]"
+                      dataType="wstr"
+                      length="80"
+                      name="last_name" />
+                    <externalMetadataColumn
+                      refId="Package\ETL Dim_Player\LOAD data in Dim_Player.Inputs[OLE DB Destination Input].ExternalColumns[date_of_birth]"
+                      dataType="dbDate"
+                      name="date_of_birth" />
+                    <externalMetadataColumn
+                      refId="Package\ETL Dim_Player\LOAD data in Dim_Player.Inputs[OLE DB Destination Input].ExternalColumns[position_sid]"
+                      dataType="i4"
+                      name="position_sid" />
+                    <externalMetadataColumn
+                      refId="Package\ETL Dim_Player\LOAD data in Dim_Player.Inputs[OLE DB Destination Input].ExternalColumns[foot]"
+                      codePage="1252"
+                      dataType="str"
+                      length="10"
+                      name="foot" />
+                    <externalMetadataColumn
+                      refId="Package\ETL Dim_Player\LOAD data in Dim_Player.Inputs[OLE DB Destination Input].ExternalColumns[height_cm]"
+                      dataType="i4"
+                      name="height_cm" />
+                    <externalMetadataColumn
+                      refId="Package\ETL Dim_Player\LOAD data in Dim_Player.Inputs[OLE DB Destination Input].ExternalColumns[contract_expiration]"
+                      dataType="dbDate"
+                      name="contract_expiration" />
+                    <externalMetadataColumn
+                      refId="Package\ETL Dim_Player\LOAD data in Dim_Player.Inputs[OLE DB Destination Input].ExternalColumns[last_season]"
+                      dataType="i4"
+                      name="last_season" />
+                  </externalMetadataColumns>
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\ETL Dim_Player\LOAD data in Dim_Player.Outputs[OLE DB Destination Error Output]"
+                  exclusionGroup="1"
+                  isErrorOut="true"
+                  name="OLE DB Destination Error Output"
+                  synchronousInputId="Package\ETL Dim_Player\LOAD data in Dim_Player.Inputs[OLE DB Destination Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\ETL Dim_Player\LOAD data in Dim_Player.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\ETL Dim_Player\LOAD data in Dim_Player.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\ETL Dim_Player\LOAD data in Dim_Player.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\ETL Dim_Player\LOAD data in Dim_Player.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\ETL Dim_Player\READ data for Dim_Player"
+              componentClassID="Microsoft.OLEDBSource"
+              contactInfo="OLE DB Source;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;7"
+              description="OLE DB Source"
+              name="READ data for Dim_Player"
+              usesDispositions="true"
+              version="7">
+              <properties>
+                <property
+                  dataType="System.Int32"
+                  description="The number of seconds before a command times out.  A value of 0 indicates an infinite time-out."
+                  name="CommandTimeout">0</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the name of the database object used to open a rowset."
+                  name="OpenRowset">[dbo].[players]</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the variable that contains the name of the database object used to open a rowset."
+                  name="OpenRowsetVariable"></property>
+                <property
+                  dataType="System.String"
+                  description="The SQL command to be executed."
+                  name="SqlCommand"
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor"></property>
+                <property
+                  dataType="System.String"
+                  description="The variable that contains the SQL command to be executed."
+                  name="SqlCommandVariable"></property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the column code page to use when code page information is unavailable from the data source."
+                  name="DefaultCodePage">1252</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Forces the use of the DefaultCodePage property value when describing character data."
+                  name="AlwaysUseDefaultCodePage">false</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the mode used to access the database."
+                  name="AccessMode"
+                  typeConverter="AccessMode">0</property>
+                <property
+                  dataType="System.String"
+                  description="The mappings between the parameters in the SQL command and variables."
+                  name="ParameterMapping"></property>
+              </properties>
+              <connections>
+                <connection
+                  refId="Package\ETL Dim_Player\READ data for Dim_Player.Connections[OleDbConnection]"
+                  connectionManagerID="{286E3C80-51ED-4B50-9C64-31A3614A916B}:external"
+                  connectionManagerRefId="Project.ConnectionManagers[DESKTOP-TVVRCUR_SQLEXPRESS.FootballScouting_Staging]"
+                  description="The OLE DB runtime connection used to access the database."
+                  name="OleDbConnection" />
+              </connections>
+              <outputs>
+                <output
+                  refId="Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Output]"
+                  name="OLE DB Source Output">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Output].Columns[player_id]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Output].ExternalColumns[player_id]"
+                      length="50"
+                      lineageId="Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Output].Columns[player_id]"
+                      name="player_id"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Output].Columns[first_name]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Output].ExternalColumns[first_name]"
+                      length="150"
+                      lineageId="Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Output].Columns[first_name]"
+                      name="first_name"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Output].Columns[last_name]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Output].ExternalColumns[last_name]"
+                      length="150"
+                      lineageId="Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Output].Columns[last_name]"
+                      name="last_name"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Output].Columns[date_of_birth]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Output].ExternalColumns[date_of_birth]"
+                      length="50"
+                      lineageId="Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Output].Columns[date_of_birth]"
+                      name="date_of_birth"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Output].Columns[position]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Output].ExternalColumns[position]"
+                      length="100"
+                      lineageId="Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Output].Columns[position]"
+                      name="position"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Output].Columns[foot]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Output].ExternalColumns[foot]"
+                      length="50"
+                      lineageId="Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Output].Columns[foot]"
+                      name="foot"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Output].Columns[height_cm]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Output].ExternalColumns[height_cm]"
+                      length="50"
+                      lineageId="Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Output].Columns[height_cm]"
+                      name="height_cm"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Output].Columns[contract_expiration]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Output].ExternalColumns[contract_expiration]"
+                      length="50"
+                      lineageId="Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Output].Columns[contract_expiration]"
+                      name="contract_expiration"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Output].Columns[last_season]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Output].ExternalColumns[last_season]"
+                      length="50"
+                      lineageId="Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Output].Columns[last_season]"
+                      name="last_season"
+                      truncationRowDisposition="FailComponent" />
+                  </outputColumns>
+                  <externalMetadataColumns
+                    isUsed="True">
+                    <externalMetadataColumn
+                      refId="Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Output].ExternalColumns[player_id]"
+                      dataType="wstr"
+                      length="50"
+                      name="player_id" />
+                    <externalMetadataColumn
+                      refId="Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Output].ExternalColumns[first_name]"
+                      dataType="wstr"
+                      length="150"
+                      name="first_name" />
+                    <externalMetadataColumn
+                      refId="Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Output].ExternalColumns[last_name]"
+                      dataType="wstr"
+                      length="150"
+                      name="last_name" />
+                    <externalMetadataColumn
+                      refId="Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Output].ExternalColumns[date_of_birth]"
+                      dataType="wstr"
+                      length="50"
+                      name="date_of_birth" />
+                    <externalMetadataColumn
+                      refId="Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Output].ExternalColumns[position]"
+                      dataType="wstr"
+                      length="100"
+                      name="position" />
+                    <externalMetadataColumn
+                      refId="Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Output].ExternalColumns[foot]"
+                      dataType="wstr"
+                      length="50"
+                      name="foot" />
+                    <externalMetadataColumn
+                      refId="Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Output].ExternalColumns[height_cm]"
+                      dataType="wstr"
+                      length="50"
+                      name="height_cm" />
+                    <externalMetadataColumn
+                      refId="Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Output].ExternalColumns[contract_expiration]"
+                      dataType="wstr"
+                      length="50"
+                      name="contract_expiration" />
+                    <externalMetadataColumn
+                      refId="Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Output].ExternalColumns[last_season]"
+                      dataType="wstr"
+                      length="50"
+                      name="last_season" />
+                  </externalMetadataColumns>
+                </output>
+                <output
+                  refId="Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Error Output]"
+                  isErrorOut="true"
+                  name="OLE DB Source Error Output">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Error Output].Columns[player_id]"
+                      dataType="wstr"
+                      length="50"
+                      lineageId="Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Error Output].Columns[player_id]"
+                      name="player_id" />
+                    <outputColumn
+                      refId="Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Error Output].Columns[first_name]"
+                      dataType="wstr"
+                      length="150"
+                      lineageId="Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Error Output].Columns[first_name]"
+                      name="first_name" />
+                    <outputColumn
+                      refId="Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Error Output].Columns[last_name]"
+                      dataType="wstr"
+                      length="150"
+                      lineageId="Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Error Output].Columns[last_name]"
+                      name="last_name" />
+                    <outputColumn
+                      refId="Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Error Output].Columns[date_of_birth]"
+                      dataType="wstr"
+                      length="50"
+                      lineageId="Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Error Output].Columns[date_of_birth]"
+                      name="date_of_birth" />
+                    <outputColumn
+                      refId="Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Error Output].Columns[position]"
+                      dataType="wstr"
+                      length="100"
+                      lineageId="Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Error Output].Columns[position]"
+                      name="position" />
+                    <outputColumn
+                      refId="Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Error Output].Columns[foot]"
+                      dataType="wstr"
+                      length="50"
+                      lineageId="Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Error Output].Columns[foot]"
+                      name="foot" />
+                    <outputColumn
+                      refId="Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Error Output].Columns[height_cm]"
+                      dataType="wstr"
+                      length="50"
+                      lineageId="Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Error Output].Columns[height_cm]"
+                      name="height_cm" />
+                    <outputColumn
+                      refId="Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Error Output].Columns[contract_expiration]"
+                      dataType="wstr"
+                      length="50"
+                      lineageId="Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Error Output].Columns[contract_expiration]"
+                      name="contract_expiration" />
+                    <outputColumn
+                      refId="Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Error Output].Columns[last_season]"
+                      dataType="wstr"
+                      length="50"
+                      lineageId="Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Error Output].Columns[last_season]"
+                      name="last_season" />
+                    <outputColumn
+                      refId="Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\ETL Dim_Player\REPLACE NULL"
+              componentClassID="Microsoft.DerivedColumn"
+              contactInfo="Derived Column;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;0"
+              description="Creates new column values by applying expressions to transformation input columns. Create new columns or overwrite existing ones. For example, concatenate the values from the 'first name' and 'last name' column to make a 'full name' column."
+              name="REPLACE NULL"
+              usesDispositions="true">
+              <inputs>
+                <input
+                  refId="Package\ETL Dim_Player\REPLACE NULL.Inputs[Derived Column Input]"
+                  description="Input to the Derived Column Transformation"
+                  name="Derived Column Input">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\ETL Dim_Player\REPLACE NULL.Inputs[Derived Column Input].Columns[position]"
+                      cachedDataType="wstr"
+                      cachedLength="100"
+                      cachedName="position"
+                      errorOrTruncationOperation="Computation"
+                      errorRowDisposition="FailComponent"
+                      lineageId="Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Output].Columns[position]"
+                      truncationRowDisposition="FailComponent"
+                      usageType="readWrite">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.String"
+                          description="Derived Column Expression"
+                          name="Expression">[ISNULL](#{Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Output].Columns[position]}) ? "Missing" : #{Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Output].Columns[position]}</property>
+                        <property
+                          containsID="true"
+                          dataType="System.String"
+                          description="Derived Column Friendly Expression"
+                          expressionType="Notify"
+                          name="FriendlyExpression">ISNULL(position) ? "Missing" : position</property>
+                      </properties>
+                    </inputColumn>
+                  </inputColumns>
+                  <externalMetadataColumns />
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\ETL Dim_Player\REPLACE NULL.Outputs[Derived Column Output]"
+                  description="Default Output of the Derived Column Transformation"
+                  exclusionGroup="1"
+                  name="Derived Column Output"
+                  synchronousInputId="Package\ETL Dim_Player\REPLACE NULL.Inputs[Derived Column Input]">
+                  <externalMetadataColumns />
+                </output>
+                <output
+                  refId="Package\ETL Dim_Player\REPLACE NULL.Outputs[Derived Column Error Output]"
+                  description="Error Output of the Derived Column Transformation"
+                  exclusionGroup="1"
+                  isErrorOut="true"
+                  name="Derived Column Error Output"
+                  synchronousInputId="Package\ETL Dim_Player\REPLACE NULL.Inputs[Derived Column Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\ETL Dim_Player\REPLACE NULL.Outputs[Derived Column Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\ETL Dim_Player\REPLACE NULL.Outputs[Derived Column Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\ETL Dim_Player\REPLACE NULL.Outputs[Derived Column Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\ETL Dim_Player\REPLACE NULL.Outputs[Derived Column Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\ETL Dim_Player\SELECT height&gt;140"
+              componentClassID="Microsoft.ConditionalSplit"
+              contactInfo="Conditional Split;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;0"
+              description="Routes data rows to different outputs depending on the content of the data. Use conditions (SSIS expressions) to specify which rows are routed. For example, separate records that need to be cleaned from those that are ready to be loaded or route only a subset of records."
+              name="SELECT height&gt;140"
+              usesDispositions="true">
+              <inputs>
+                <input
+                  refId="Package\ETL Dim_Player\SELECT height&gt;140.Inputs[Conditional Split Input]"
+                  description="Input to the Conditional Split Transformation"
+                  name="Conditional Split Input">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\ETL Dim_Player\SELECT height&gt;140.Inputs[Conditional Split Input].Columns[Copy of height_cm]"
+                      cachedDataType="i4"
+                      cachedName="Copy of height_cm"
+                      lineageId="Package\ETL Dim_Player\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of height_cm]" />
+                  </inputColumns>
+                  <externalMetadataColumns />
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\ETL Dim_Player\SELECT height&gt;140.Outputs[Case 1]"
+                  description="Output 1 of the Conditional Split Transformation"
+                  errorOrTruncationOperation="Computation"
+                  errorRowDisposition="FailComponent"
+                  exclusionGroup="1"
+                  name="Case 1"
+                  synchronousInputId="Package\ETL Dim_Player\SELECT height&gt;140.Inputs[Conditional Split Input]"
+                  truncationRowDisposition="FailComponent">
+                  <properties>
+                    <property
+                      containsID="true"
+                      dataType="System.String"
+                      description="Specifies the expression. This expression version uses lineage identifiers instead of column names."
+                      name="Expression">#{Package\ETL Dim_Player\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of height_cm]} &gt;= 140 || #{Package\ETL Dim_Player\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of height_cm]} == -1</property>
+                    <property
+                      containsID="true"
+                      dataType="System.String"
+                      description="Specifies the friendly version of the expression. This expression version uses column names."
+                      expressionType="Notify"
+                      name="FriendlyExpression">[Copy of height_cm] &gt;= 140 || [Copy of height_cm] == -1</property>
+                    <property
+                      dataType="System.Int32"
+                      description="Specifies the position of the condition in the list of conditions that the transformation evaluates. The evaluation order is from the lowest to the highest value."
+                      name="EvaluationOrder">0</property>
+                  </properties>
+                  <externalMetadataColumns />
+                </output>
+                <output
+                  refId="Package\ETL Dim_Player\SELECT height&gt;140.Outputs[Case 2]"
+                  description="Output 2 of the Conditional Split Transformation"
+                  errorOrTruncationOperation="Computation"
+                  errorRowDisposition="FailComponent"
+                  exclusionGroup="1"
+                  name="Case 2"
+                  synchronousInputId="Package\ETL Dim_Player\SELECT height&gt;140.Inputs[Conditional Split Input]"
+                  truncationRowDisposition="FailComponent">
+                  <properties>
+                    <property
+                      containsID="true"
+                      dataType="System.String"
+                      description="Specifies the expression. This expression version uses lineage identifiers instead of column names."
+                      name="Expression">#{Package\ETL Dim_Player\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of height_cm]} &lt;= 140</property>
+                    <property
+                      containsID="true"
+                      dataType="System.String"
+                      description="Specifies the friendly version of the expression. This expression version uses column names."
+                      expressionType="Notify"
+                      name="FriendlyExpression">[Copy of height_cm] &lt;= 140</property>
+                    <property
+                      dataType="System.Int32"
+                      description="Specifies the position of the condition in the list of conditions that the transformation evaluates. The evaluation order is from the lowest to the highest value."
+                      name="EvaluationOrder">1</property>
+                  </properties>
+                  <externalMetadataColumns />
+                </output>
+                <output
+                  refId="Package\ETL Dim_Player\SELECT height&gt;140.Outputs[Valid heigh]"
+                  description="Default Output of the Conditional Split Transformation"
+                  exclusionGroup="1"
+                  name="Valid heigh"
+                  synchronousInputId="Package\ETL Dim_Player\SELECT height&gt;140.Inputs[Conditional Split Input]">
+                  <properties>
+                    <property
+                      dataType="System.Boolean"
+                      name="IsDefaultOut">true</property>
+                  </properties>
+                  <externalMetadataColumns />
+                </output>
+                <output
+                  refId="Package\ETL Dim_Player\SELECT height&gt;140.Outputs[Conditional Split Error Output]"
+                  description="Error Output of the Conditional Split Transformation"
+                  exclusionGroup="1"
+                  isErrorOut="true"
+                  name="Conditional Split Error Output"
+                  synchronousInputId="Package\ETL Dim_Player\SELECT height&gt;140.Inputs[Conditional Split Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\ETL Dim_Player\SELECT height&gt;140.Outputs[Conditional Split Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\ETL Dim_Player\SELECT height&gt;140.Outputs[Conditional Split Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\ETL Dim_Player\SELECT height&gt;140.Outputs[Conditional Split Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\ETL Dim_Player\SELECT height&gt;140.Outputs[Conditional Split Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\ETL Dim_Player\Union All"
+              componentClassID="Microsoft.UnionAll"
+              contactInfo="Union All;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;1"
+              description="Combines rows from multiple data flows without sorting. For example, add rows back to a data flow after correction of errors. If sorting is important, we recommend using the Merge transformation."
+              name="Union All"
+              version="1">
+              <inputs>
+                <input
+                  refId="Package\ETL Dim_Player\Union All.Inputs[Union All Input 1]"
+                  name="Union All Input 1">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\ETL Dim_Player\Union All.Inputs[Union All Input 1].Columns[player_id]"
+                      cachedDataType="wstr"
+                      cachedLength="50"
+                      cachedName="player_id"
+                      lineageId="Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Output].Columns[player_id]">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="Output column lineage ID"
+                          name="OutputColumnLineageID">#{Package\ETL Dim_Player\Union All.Outputs[Union All Output 1].Columns[player_id]}</property>
+                      </properties>
+                    </inputColumn>
+                    <inputColumn
+                      refId="Package\ETL Dim_Player\Union All.Inputs[Union All Input 1].Columns[first_name]"
+                      cachedDataType="wstr"
+                      cachedLength="150"
+                      cachedName="first_name"
+                      lineageId="Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Output].Columns[first_name]">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="Output column lineage ID"
+                          name="OutputColumnLineageID">#{Package\ETL Dim_Player\Union All.Outputs[Union All Output 1].Columns[first_name]}</property>
+                      </properties>
+                    </inputColumn>
+                    <inputColumn
+                      refId="Package\ETL Dim_Player\Union All.Inputs[Union All Input 1].Columns[last_name]"
+                      cachedDataType="wstr"
+                      cachedLength="150"
+                      cachedName="last_name"
+                      lineageId="Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Output].Columns[last_name]">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="Output column lineage ID"
+                          name="OutputColumnLineageID">#{Package\ETL Dim_Player\Union All.Outputs[Union All Output 1].Columns[last_name]}</property>
+                      </properties>
+                    </inputColumn>
+                    <inputColumn
+                      refId="Package\ETL Dim_Player\Union All.Inputs[Union All Input 1].Columns[date_of_birth]"
+                      cachedDataType="wstr"
+                      cachedLength="50"
+                      cachedName="date_of_birth"
+                      lineageId="Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Output].Columns[date_of_birth]">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="Output column lineage ID"
+                          name="OutputColumnLineageID">#{Package\ETL Dim_Player\Union All.Outputs[Union All Output 1].Columns[date_of_birth]}</property>
+                      </properties>
+                    </inputColumn>
+                    <inputColumn
+                      refId="Package\ETL Dim_Player\Union All.Inputs[Union All Input 1].Columns[position]"
+                      cachedDataType="wstr"
+                      cachedLength="100"
+                      cachedName="position"
+                      lineageId="Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Output].Columns[position]">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="Output column lineage ID"
+                          name="OutputColumnLineageID">#{Package\ETL Dim_Player\Union All.Outputs[Union All Output 1].Columns[position]}</property>
+                      </properties>
+                    </inputColumn>
+                    <inputColumn
+                      refId="Package\ETL Dim_Player\Union All.Inputs[Union All Input 1].Columns[foot]"
+                      cachedDataType="wstr"
+                      cachedLength="50"
+                      cachedName="foot"
+                      lineageId="Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Output].Columns[foot]">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="Output column lineage ID"
+                          name="OutputColumnLineageID">#{Package\ETL Dim_Player\Union All.Outputs[Union All Output 1].Columns[foot]}</property>
+                      </properties>
+                    </inputColumn>
+                    <inputColumn
+                      refId="Package\ETL Dim_Player\Union All.Inputs[Union All Input 1].Columns[height_cm]"
+                      cachedDataType="wstr"
+                      cachedLength="50"
+                      cachedName="height_cm"
+                      lineageId="Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Output].Columns[height_cm]">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="Output column lineage ID"
+                          name="OutputColumnLineageID">#{Package\ETL Dim_Player\Union All.Outputs[Union All Output 1].Columns[height_cm]}</property>
+                      </properties>
+                    </inputColumn>
+                    <inputColumn
+                      refId="Package\ETL Dim_Player\Union All.Inputs[Union All Input 1].Columns[contract_expiration]"
+                      cachedDataType="wstr"
+                      cachedLength="50"
+                      cachedName="contract_expiration"
+                      lineageId="Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Output].Columns[contract_expiration]">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="Output column lineage ID"
+                          name="OutputColumnLineageID">#{Package\ETL Dim_Player\Union All.Outputs[Union All Output 1].Columns[contract_expiration]}</property>
+                      </properties>
+                    </inputColumn>
+                    <inputColumn
+                      refId="Package\ETL Dim_Player\Union All.Inputs[Union All Input 1].Columns[last_season]"
+                      cachedDataType="wstr"
+                      cachedLength="50"
+                      cachedName="last_season"
+                      lineageId="Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Output].Columns[last_season]">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="Output column lineage ID"
+                          name="OutputColumnLineageID">#{Package\ETL Dim_Player\Union All.Outputs[Union All Output 1].Columns[last_season]}</property>
+                      </properties>
+                    </inputColumn>
+                    <inputColumn
+                      refId="Package\ETL Dim_Player\Union All.Inputs[Union All Input 1].Columns[position_sid]"
+                      cachedDataType="i4"
+                      cachedName="position_sid"
+                      lineageId="Package\ETL Dim_Player\JOIN position_sid.Outputs[Lookup Match Output].Columns[position_sid]">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="Output column lineage ID"
+                          name="OutputColumnLineageID">#{Package\ETL Dim_Player\Union All.Outputs[Union All Output 1].Columns[position_sid]}</property>
+                      </properties>
+                    </inputColumn>
+                  </inputColumns>
+                  <externalMetadataColumns />
+                </input>
+                <input
+                  refId="Package\ETL Dim_Player\Union All.Inputs[Union All Input 2]"
+                  hasSideEffects="true"
+                  name="Union All Input 2">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\ETL Dim_Player\Union All.Inputs[Union All Input 2].Columns[player_id]"
+                      cachedDataType="wstr"
+                      cachedLength="50"
+                      cachedName="player_id"
+                      lineageId="Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Output].Columns[player_id]">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="Output column lineage ID"
+                          name="OutputColumnLineageID">#{Package\ETL Dim_Player\Union All.Outputs[Union All Output 1].Columns[player_id]}</property>
+                      </properties>
+                    </inputColumn>
+                    <inputColumn
+                      refId="Package\ETL Dim_Player\Union All.Inputs[Union All Input 2].Columns[first_name]"
+                      cachedDataType="wstr"
+                      cachedLength="150"
+                      cachedName="first_name"
+                      lineageId="Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Output].Columns[first_name]">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="Output column lineage ID"
+                          name="OutputColumnLineageID">#{Package\ETL Dim_Player\Union All.Outputs[Union All Output 1].Columns[first_name]}</property>
+                      </properties>
+                    </inputColumn>
+                    <inputColumn
+                      refId="Package\ETL Dim_Player\Union All.Inputs[Union All Input 2].Columns[last_name]"
+                      cachedDataType="wstr"
+                      cachedLength="150"
+                      cachedName="last_name"
+                      lineageId="Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Output].Columns[last_name]">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="Output column lineage ID"
+                          name="OutputColumnLineageID">#{Package\ETL Dim_Player\Union All.Outputs[Union All Output 1].Columns[last_name]}</property>
+                      </properties>
+                    </inputColumn>
+                    <inputColumn
+                      refId="Package\ETL Dim_Player\Union All.Inputs[Union All Input 2].Columns[date_of_birth]"
+                      cachedDataType="wstr"
+                      cachedLength="50"
+                      cachedName="date_of_birth"
+                      lineageId="Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Output].Columns[date_of_birth]">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="Output column lineage ID"
+                          name="OutputColumnLineageID">#{Package\ETL Dim_Player\Union All.Outputs[Union All Output 1].Columns[date_of_birth]}</property>
+                      </properties>
+                    </inputColumn>
+                    <inputColumn
+                      refId="Package\ETL Dim_Player\Union All.Inputs[Union All Input 2].Columns[position]"
+                      cachedDataType="wstr"
+                      cachedLength="100"
+                      cachedName="position"
+                      lineageId="Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Output].Columns[position]">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="Output column lineage ID"
+                          name="OutputColumnLineageID">#{Package\ETL Dim_Player\Union All.Outputs[Union All Output 1].Columns[position]}</property>
+                      </properties>
+                    </inputColumn>
+                    <inputColumn
+                      refId="Package\ETL Dim_Player\Union All.Inputs[Union All Input 2].Columns[foot]"
+                      cachedDataType="wstr"
+                      cachedLength="50"
+                      cachedName="foot"
+                      lineageId="Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Output].Columns[foot]">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="Output column lineage ID"
+                          name="OutputColumnLineageID">#{Package\ETL Dim_Player\Union All.Outputs[Union All Output 1].Columns[foot]}</property>
+                      </properties>
+                    </inputColumn>
+                    <inputColumn
+                      refId="Package\ETL Dim_Player\Union All.Inputs[Union All Input 2].Columns[height_cm]"
+                      cachedDataType="wstr"
+                      cachedLength="50"
+                      cachedName="height_cm"
+                      lineageId="Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Output].Columns[height_cm]">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="Output column lineage ID"
+                          name="OutputColumnLineageID">#{Package\ETL Dim_Player\Union All.Outputs[Union All Output 1].Columns[height_cm]}</property>
+                      </properties>
+                    </inputColumn>
+                    <inputColumn
+                      refId="Package\ETL Dim_Player\Union All.Inputs[Union All Input 2].Columns[contract_expiration]"
+                      cachedDataType="wstr"
+                      cachedLength="50"
+                      cachedName="contract_expiration"
+                      lineageId="Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Output].Columns[contract_expiration]">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="Output column lineage ID"
+                          name="OutputColumnLineageID">#{Package\ETL Dim_Player\Union All.Outputs[Union All Output 1].Columns[contract_expiration]}</property>
+                      </properties>
+                    </inputColumn>
+                    <inputColumn
+                      refId="Package\ETL Dim_Player\Union All.Inputs[Union All Input 2].Columns[last_season]"
+                      cachedDataType="wstr"
+                      cachedLength="50"
+                      cachedName="last_season"
+                      lineageId="Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Output].Columns[last_season]">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="Output column lineage ID"
+                          name="OutputColumnLineageID">#{Package\ETL Dim_Player\Union All.Outputs[Union All Output 1].Columns[last_season]}</property>
+                      </properties>
+                    </inputColumn>
+                  </inputColumns>
+                  <externalMetadataColumns />
+                </input>
+                <input
+                  refId="Package\ETL Dim_Player\Union All.Inputs[Union All Input 3]"
+                  dangling="true"
+                  hasSideEffects="true"
+                  name="Union All Input 3">
+                  <externalMetadataColumns />
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\ETL Dim_Player\Union All.Outputs[Union All Output 1]"
+                  name="Union All Output 1">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\ETL Dim_Player\Union All.Outputs[Union All Output 1].Columns[player_id]"
+                      dataType="wstr"
+                      length="50"
+                      lineageId="Package\ETL Dim_Player\Union All.Outputs[Union All Output 1].Columns[player_id]"
+                      name="player_id" />
+                    <outputColumn
+                      refId="Package\ETL Dim_Player\Union All.Outputs[Union All Output 1].Columns[first_name]"
+                      dataType="wstr"
+                      length="150"
+                      lineageId="Package\ETL Dim_Player\Union All.Outputs[Union All Output 1].Columns[first_name]"
+                      name="first_name" />
+                    <outputColumn
+                      refId="Package\ETL Dim_Player\Union All.Outputs[Union All Output 1].Columns[last_name]"
+                      dataType="wstr"
+                      length="150"
+                      lineageId="Package\ETL Dim_Player\Union All.Outputs[Union All Output 1].Columns[last_name]"
+                      name="last_name" />
+                    <outputColumn
+                      refId="Package\ETL Dim_Player\Union All.Outputs[Union All Output 1].Columns[date_of_birth]"
+                      dataType="wstr"
+                      length="50"
+                      lineageId="Package\ETL Dim_Player\Union All.Outputs[Union All Output 1].Columns[date_of_birth]"
+                      name="date_of_birth" />
+                    <outputColumn
+                      refId="Package\ETL Dim_Player\Union All.Outputs[Union All Output 1].Columns[position]"
+                      dataType="wstr"
+                      length="100"
+                      lineageId="Package\ETL Dim_Player\Union All.Outputs[Union All Output 1].Columns[position]"
+                      name="position" />
+                    <outputColumn
+                      refId="Package\ETL Dim_Player\Union All.Outputs[Union All Output 1].Columns[foot]"
+                      dataType="wstr"
+                      length="50"
+                      lineageId="Package\ETL Dim_Player\Union All.Outputs[Union All Output 1].Columns[foot]"
+                      name="foot" />
+                    <outputColumn
+                      refId="Package\ETL Dim_Player\Union All.Outputs[Union All Output 1].Columns[height_cm]"
+                      dataType="wstr"
+                      length="50"
+                      lineageId="Package\ETL Dim_Player\Union All.Outputs[Union All Output 1].Columns[height_cm]"
+                      name="height_cm" />
+                    <outputColumn
+                      refId="Package\ETL Dim_Player\Union All.Outputs[Union All Output 1].Columns[contract_expiration]"
+                      dataType="wstr"
+                      length="50"
+                      lineageId="Package\ETL Dim_Player\Union All.Outputs[Union All Output 1].Columns[contract_expiration]"
+                      name="contract_expiration" />
+                    <outputColumn
+                      refId="Package\ETL Dim_Player\Union All.Outputs[Union All Output 1].Columns[last_season]"
+                      dataType="wstr"
+                      length="50"
+                      lineageId="Package\ETL Dim_Player\Union All.Outputs[Union All Output 1].Columns[last_season]"
+                      name="last_season" />
+                    <outputColumn
+                      refId="Package\ETL Dim_Player\Union All.Outputs[Union All Output 1].Columns[position_sid]"
+                      dataType="i4"
+                      lineageId="Package\ETL Dim_Player\Union All.Outputs[Union All Output 1].Columns[position_sid]"
+                      name="position_sid" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+          </components>
+          <paths>
+            <path
+              refId="Package\ETL Dim_Player.Paths[Case 1]"
+              endId="Package\ETL Dim_Player\LOAD data in Dim_Player.Inputs[OLE DB Destination Input]"
+              name="Case 1"
+              startId="Package\ETL Dim_Player\SELECT height&gt;140.Outputs[Case 1]" />
+            <path
+              refId="Package\ETL Dim_Player.Paths[Data Conversion Output]"
+              endId="Package\ETL Dim_Player\SELECT height&gt;140.Inputs[Conditional Split Input]"
+              name="Data Conversion Output"
+              startId="Package\ETL Dim_Player\Data Conversion.Outputs[Data Conversion Output]" />
+            <path
+              refId="Package\ETL Dim_Player.Paths[Derived Column Output]"
+              endId="Package\ETL Dim_Player\Data Conversion.Inputs[Data Conversion Input]"
+              name="Derived Column Output"
+              startId="Package\ETL Dim_Player\CLEANING and TRANSFORM.Outputs[Derived Column Output]" />
+            <path
+              refId="Package\ETL Dim_Player.Paths[Derived Column Output1]"
+              endId="Package\ETL Dim_Player\Union All.Inputs[Union All Input 2]"
+              name="Derived Column Output"
+              startId="Package\ETL Dim_Player\REPLACE NULL.Outputs[Derived Column Output]" />
+            <path
+              refId="Package\ETL Dim_Player.Paths[Lookup Match Output]"
+              endId="Package\ETL Dim_Player\Union All.Inputs[Union All Input 1]"
+              name="Lookup Match Output"
+              startId="Package\ETL Dim_Player\JOIN position_sid.Outputs[Lookup Match Output]" />
+            <path
+              refId="Package\ETL Dim_Player.Paths[Lookup No Match Output]"
+              endId="Package\ETL Dim_Player\REPLACE NULL.Inputs[Derived Column Input]"
+              name="Lookup No Match Output"
+              startId="Package\ETL Dim_Player\JOIN position_sid.Outputs[Lookup No Match Output]" />
+            <path
+              refId="Package\ETL Dim_Player.Paths[OLE DB Source Output]"
+              endId="Package\ETL Dim_Player\JOIN position_sid.Inputs[Lookup Input]"
+              name="OLE DB Source Output"
+              startId="Package\ETL Dim_Player\READ data for Dim_Player.Outputs[OLE DB Source Output]" />
+            <path
+              refId="Package\ETL Dim_Player.Paths[Union All Output 1]"
+              endId="Package\ETL Dim_Player\CLEANING and TRANSFORM.Inputs[Derived Column Input]"
+              name="Union All Output 1"
+              startId="Package\ETL Dim_Player\Union All.Outputs[Union All Output 1]" />
+          </paths>
+        </pipeline>
+      </DTS:ObjectData>
+    </DTS:Executable>
+  </DTS:Executables>
+  <DTS:PrecedenceConstraints>
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint]"
+      DTS:CreationName=""
+      DTS:DTSID="{08FE5F15-D51E-4C29-BC9B-F380F99A042D}"
+      DTS:From="Package\DROP and CREATE Dim_Player"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint"
+      DTS:To="Package\ETL Dim_Player" />
+  </DTS:PrecedenceConstraints>
+  <DTS:DesignTimeProperties><![CDATA[<?xml version="1.0"?>
+<!--This CDATA section contains the layout information of the package. The section includes information such as (x,y) coordinates, width, and height.-->
+<!--If you manually edit this section and make a mistake, you can delete it. -->
+<!--The package will still be able to load normally but the previous layout information will be lost and the designer will automatically re-arrange the elements on the design surface.-->
+<Objects
+  Version="8">
+  <!--Each node below will contain properties that do not affect runtime behavior.-->
+  <Package
+    design-time-name="Package">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
+        <NodeLayout
+          Size="230.4,41.6"
+          Id="Package\DROP and CREATE Dim_Player"
+          TopLeft="40.8333311022985,28.5999998011192" />
+        <NodeLayout
+          Size="154.4,41.6"
+          Id="Package\ETL Dim_Player"
+          TopLeft="77.4999957655869,170.733332146075" />
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint]"
+          TopLeft="155.366663433943,70.1999998011192">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,100.533332344956"
+              Start="0,0"
+              End="0,93.033332344956">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,93.033332344956" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+      </GraphLayout>
+    </LayoutInfo>
+  </Package>
+  <TaskHost
+    design-time-name="Package\ETL Dim_Player">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="16" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
+        <NodeLayout
+          Size="156,41.6"
+          Id="Package\ETL Dim_Player\REPLACE NULL"
+          TopLeft="25.8333319218623,234.866665033433" />
+        <NodeLayout
+          Size="156,41.6"
+          Id="Package\ETL Dim_Player\Data Conversion"
+          TopLeft="279.999984701475,298.999997920791" />
+        <NodeLayout
+          Size="197.6,41.6"
+          Id="Package\ETL Dim_Player\LOAD data in Dim_Player"
+          TopLeft="629.999965578319,177.133332218395" />
+        <NodeLayout
+          Size="201.6,41.6"
+          Id="Package\ETL Dim_Player\READ data for Dim_Player"
+          TopLeft="58.3333301461407,29.4666664617592" />
+        <NodeLayout
+          Size="120,41.6"
+          Id="Package\ETL Dim_Player\Union All"
+          TopLeft="209.999988526106,195.866665304634" />
+        <NodeLayout
+          Size="173.6,41.6"
+          Id="Package\ETL Dim_Player\SELECT height&gt;140"
+          TopLeft="497.499972817799,293.799998101592" />
+        <NodeLayout
+          Size="160,41.6"
+          Id="Package\ETL Dim_Player\JOIN position_sid"
+          TopLeft="62.4999965851507,103.133332616157" />
+        <NodeLayout
+          Size="220,41.6"
+          Id="Package\ETL Dim_Player\CLEANING and TRANSFORM"
+          TopLeft="364.99998005728,171.599998806715" />
+        <EdgeLayout
+          Id="Package\ETL Dim_Player.Paths[Data Conversion Output]"
+          TopLeft="435.999984701475,317.199998011191">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="61.499988116324,0"
+              Start="0,0"
+              End="53.999988116324,0">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="53.999988116324,0" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\ETL Dim_Player.Paths[Case 1]"
+          TopLeft="584.299972817799,293.799998101592">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="144.49999276052,-75.066665883197"
+              Start="0,0"
+              End="144.49999276052,-67.566665883197">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,-33.5333329415985" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,-33.5333329415985"
+                    Point2="0,-37.5333329415985"
+                    Point3="4,-37.5333329415985" />
+                  <mssgle:LineSegment
+                    End="140.49999276052,-37.5333329415985" />
+                  <mssgle:CubicBezierSegment
+                    Point1="140.49999276052,-37.5333329415985"
+                    Point2="144.49999276052,-37.5333329415985"
+                    Point3="144.49999276052,-41.5333329415985" />
+                  <mssgle:LineSegment
+                    End="144.49999276052,-67.566665883197" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="57.03191044276,-32.5333329415985,30.436171875,9.5537109375"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\ETL Dim_Player.Paths[Union All Output 1]"
+          TopLeft="329.999988526106,216.666665304634">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="34.9999915311741,-24.2666664979192"
+              Start="0,0"
+              End="27.4999915311741,-24.2666664979192">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="13.499995765587,0" />
+                  <mssgle:CubicBezierSegment
+                    Point1="13.499995765587,0"
+                    Point2="17.499995765587,0"
+                    Point3="17.499995765587,-4" />
+                  <mssgle:LineSegment
+                    End="17.499995765587,-20.2666664979192" />
+                  <mssgle:CubicBezierSegment
+                    Point1="17.499995765587,-20.2666664979192"
+                    Point2="17.499995765587,-24.2666664979192"
+                    Point3="21.499995765587,-24.2666664979192" />
+                  <mssgle:LineSegment
+                    End="27.4999915311741,-24.2666664979192" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\ETL Dim_Player.Paths[OLE DB Source Output]"
+          TopLeft="159.133330146141,71.0666664617592">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="-16.63333356099,32.0666661543978"
+              Start="0,0"
+              End="-16.63333356099,24.5666661543978">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,12.0333330771989" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,12.0333330771989"
+                    Point2="0,16.0333330771989"
+                    Point3="-4,16.0333330771989" />
+                  <mssgle:LineSegment
+                    End="-12.63333356099,16.0333330771989" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-12.63333356099,16.0333330771989"
+                    Point2="-16.63333356099,16.0333330771989"
+                    Point3="-16.63333356099,20.0333330771989" />
+                  <mssgle:LineSegment
+                    End="-16.63333356099,24.5666661543978" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\ETL Dim_Player.Paths[Lookup No Match Output]"
+          TopLeft="117.166663251817,144.733332616157">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="-13.3333313299551,90.133332417276"
+              Start="0,0"
+              End="-13.3333313299551,82.633332417276">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,32.5887785060229" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,32.5887785060229"
+                    Point2="0,36.5887785060229"
+                    Point3="-4,36.5887785060229" />
+                  <mssgle:LineSegment
+                    End="-9.3333313299551,36.5887785060229" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-9.3333313299551,36.5887785060229"
+                    Point2="-13.3333313299551,36.5887785060229"
+                    Point3="-13.3333313299551,40.5887785060229" />
+                  <mssgle:LineSegment
+                    End="-13.3333313299551,82.633332417276" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="-62.4730523837275,41.5887785060229,111.6127734375,11.609375"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\ETL Dim_Player.Paths[Lookup Match Output]"
+          TopLeft="167.833329918484,144.733332616157">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="102.166658607622,51.1333326884772"
+              Start="0,0"
+              End="102.166658607622,43.6333326884772">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,16.7570954477977" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,16.7570954477977"
+                    Point2="0,20.7570954477977"
+                    Point3="4,20.7570954477977" />
+                  <mssgle:LineSegment
+                    End="98.1666586076219,20.7570954477977" />
+                  <mssgle:CubicBezierSegment
+                    Point1="98.1666586076219,20.7570954477977"
+                    Point2="102.166658607622,20.7570954477977"
+                    Point3="102.166658607622,24.7570954477977" />
+                  <mssgle:LineSegment
+                    End="102.166658607622,43.6333326884772" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="2.89194258506095,25.7570954477977,96.3827734375,11.609375"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\ETL Dim_Player.Paths[Derived Column Output1]"
+          TopLeft="181.833331921862,255.666665033433">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="28.1666566042437,-38.9999997287989"
+              Start="0,0"
+              End="20.6666566042437,-38.9999997287989">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="10.0833283021218,0" />
+                  <mssgle:CubicBezierSegment
+                    Point1="10.0833283021218,0"
+                    Point2="14.0833283021218,0"
+                    Point3="14.0833283021218,-4" />
+                  <mssgle:LineSegment
+                    End="14.0833283021218,-34.9999997287989" />
+                  <mssgle:CubicBezierSegment
+                    Point1="14.0833283021218,-34.9999997287989"
+                    Point2="14.0833283021218,-38.9999997287989"
+                    Point3="18.0833283021218,-38.9999997287989" />
+                  <mssgle:LineSegment
+                    End="20.6666566042437,-38.9999997287989" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\ETL Dim_Player.Paths[Derived Column Output]"
+          TopLeft="474.99998005728,213.199998806715">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="-116.999995355805,85.799999114076"
+              Start="0,0"
+              End="-116.999995355805,78.299999114076">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,38.899999557038" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,38.899999557038"
+                    Point2="0,42.899999557038"
+                    Point3="-4,42.899999557038" />
+                  <mssgle:LineSegment
+                    End="-112.999995355805,42.899999557038" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-112.999995355805,42.899999557038"
+                    Point2="-116.999995355805,42.899999557038"
+                    Point3="-116.999995355805,46.899999557038" />
+                  <mssgle:LineSegment
+                    End="-116.999995355805,78.299999114076" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+      </GraphLayout>
+    </LayoutInfo>
+  </TaskHost>
+  <PipelineComponentMetadata
+    design-time-name="Package\ETL Dim_Player\LOAD data in Dim_Player">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+      <Property>
+        <Name>TableInfoObjectType</Name>
+        <Value
+          type="q2:string">Table</Value>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <PipelineComponentMetadata
+    design-time-name="Package\ETL Dim_Player\READ data for Dim_Player">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+      <Property>
+        <Name>TableInfoObjectType</Name>
+        <Value
+          type="q2:string">Table</Value>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <PipelineComponentMetadata
+    design-time-name="Package\ETL Dim_Player\JOIN position_sid">
+    <Properties>
+      <Property>
+        <Name>OverwriteParamsSQLProp</Name>
+        <Value
+          type="q2:string">false</Value>
+      </Property>
+      <Property>
+        <Name>UsedTableName</Name>
+        <Value
+          type="q3:string">[dbo].[Dim_Position]</Value>
+      </Property>
+      <Property>
+        <Name>TableInfoObjectType</Name>
+        <Value
+          type="q4:string">0</Value>
+      </Property>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+</Objects>]]></DTS:DesignTimeProperties>
+</DTS:Executable>

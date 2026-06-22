@@ -1,0 +1,950 @@
+<?xml version="1.0"?>
+<DTS:Executable xmlns:DTS="www.microsoft.com/SqlServer/Dts"
+  DTS:refId="Package"
+  DTS:CreationDate="6/12/2026 11:48:52 AM"
+  DTS:CreationName="Microsoft.Package"
+  DTS:CreatorComputerName="DESKTOP-TVVRCUR"
+  DTS:CreatorName="DESKTOP-TVVRCUR\Korisnik"
+  DTS:DTSID="{5E4BA185-AE22-4E53-9C47-B1598D7C0B1E}"
+  DTS:ExecutableType="Microsoft.Package"
+  DTS:LastModifiedProductVersion="17.0.1016.0"
+  DTS:LocaleID="1033"
+  DTS:ObjectName="DimCountry"
+  DTS:PackageType="5"
+  DTS:VersionBuild="16"
+  DTS:VersionGUID="{75E72378-47A8-4B68-8083-06FC5DAEDA02}">
+  <DTS:Property
+    DTS:Name="PackageFormatVersion">8</DTS:Property>
+  <DTS:Variables />
+  <DTS:Executables>
+    <DTS:Executable
+      DTS:refId="Package\DROP and CREATE DimCountry"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:Description="Execute SQL Task"
+      DTS:DTSID="{C237EF1C-05DB-48FE-9F9F-76CFFC189E31}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="DROP and CREATE DimCountry"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2025; © 2025 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{48255525-DF27-4D39-9F96-F9E61C00D4D5}"
+          SQLTask:SqlStatementSource="&#xA;IF EXISTS&#xA;&#x9;(SELECT *&#xA;&#x9;FROM INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS&#xA;&#x9;WHERE CONSTRAINT_NAME = 'FK_Dim_Club_Dim_Country') -- Menjamo naziv Constraint-a&#xA;&#xA;BEGIN&#xA;&#x9;&#xA;&#x9;ALTER TABLE [dbo].[Dim_Club] DROP CONSTRAINT [FK_Dim_Club_Dim_Country] -- Menjamo ovu liniju&#xA;END;&#xA;&#xA;&#xA;IF EXISTS&#xA;&#x9;(SELECT *&#xA;&#x9;FROM INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS&#xA;&#x9;WHERE CONSTRAINT_NAME = 'FK_Dim_Competition_Dim_Country') -- Menjamo naziv Constraint-a&#xA;&#xA;BEGIN&#xA;&#x9;&#xA;&#x9;ALTER TABLE [dbo].[Dim_Competition] DROP CONSTRAINT [FK_Dim_Competition_Dim_Country] -- Menjamo ovu liniju&#xA;END;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;IF EXISTS&#xA;&#x9;(SELECT *&#xA;&#x9;FROM sysobjects&#xA;&#x9;WHERE id = OBJECT_ID(N'Dim_Country')) -- Menjamo naziv tabele&#xA;BEGIN&#xA;&#x9;-- KOMANDA ZA DROP TABLE&#xA;&#x9;IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Dim_Country]') AND type in (N'U'))&#xA;&#x9;DROP TABLE [dbo].[Dim_Country]&#xA;&#xA;&#xA;&#x9;-- KOMANDA ZA CREATE TABLE&#xA;&#x9;CREATE TABLE [dbo].[Dim_Country](&#xA;&#x9;[country_sid] [int] IDENTITY(1,1) NOT NULL,&#xA;&#x9;[country_id] [int] NULL,&#xA;&#x9;[country_name] [nvarchar](80) NOT NULL,&#xA;&#x9;[confederation] [varchar](20) NOT NULL,&#xA;PRIMARY KEY CLUSTERED &#xA;(&#xA;&#x9;[country_sid] ASC&#xA;)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]&#xA;) ON [PRIMARY]&#xA;&#xA;&#xA;ALTER TABLE [dbo].[Dim_Country]  WITH CHECK ADD  CONSTRAINT [CHK_Country_Confederation] CHECK  (([confederation]='amerika' OR [confederation]='afrika' OR [confederation]='asien' OR [confederation]='europa' OR [confederation]='Missing'))&#xA;&#xA;&#xA;ALTER TABLE [dbo].[Dim_Country] CHECK CONSTRAINT [CHK_Country_Confederation]&#xA;&#xA;&#xA;INSERT INTO [dbo].[Dim_Country]&#xA;           ([country_id]&#xA;           ,[country_name]&#xA;           ,[confederation])&#xA;     VALUES&#xA;           (-1,&#xA;           'Missing',&#xA;&#x9;&#x9;   'Missing')&#xA;&#xA;&#xA;END&#xA;&#xA;&#xA;&#xA;&#xA;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\ETL Dim_Country"
+      DTS:CreationName="Microsoft.Pipeline"
+      DTS:Description="Data Flow Task"
+      DTS:DTSID="{0E975DA3-46BC-490A-96D7-9FDBC842D7BD}"
+      DTS:ExecutableType="Microsoft.Pipeline"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="ETL Dim_Country"
+      DTS:TaskContact="Performs high-performance data extraction, transformation and loading;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <pipeline
+          version="1">
+          <components>
+            <component
+              refId="Package\ETL Dim_Country\Cleaning data"
+              componentClassID="Microsoft.DerivedColumn"
+              contactInfo="Derived Column;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;0"
+              description="Creates new column values by applying expressions to transformation input columns. Create new columns or overwrite existing ones. For example, concatenate the values from the 'first name' and 'last name' column to make a 'full name' column."
+              name="Cleaning data"
+              usesDispositions="true">
+              <inputs>
+                <input
+                  refId="Package\ETL Dim_Country\Cleaning data.Inputs[Derived Column Input]"
+                  description="Input to the Derived Column Transformation"
+                  name="Derived Column Input">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\ETL Dim_Country\Cleaning data.Inputs[Derived Column Input].Columns[country_name]"
+                      cachedDataType="wstr"
+                      cachedLength="150"
+                      cachedName="country_name"
+                      cachedSortKeyPosition="2"
+                      errorOrTruncationOperation="Computation"
+                      errorRowDisposition="FailComponent"
+                      lineageId="Package\ETL Dim_Country\Unique values for Contries.Outputs[Sort Output].Columns[country_name]"
+                      truncationRowDisposition="FailComponent"
+                      usageType="readWrite">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.String"
+                          description="Derived Column Expression"
+                          name="Expression">[TRIM](#{Package\ETL Dim_Country\Unique values for Contries.Outputs[Sort Output].Columns[country_name]})</property>
+                        <property
+                          containsID="true"
+                          dataType="System.String"
+                          description="Derived Column Friendly Expression"
+                          expressionType="Notify"
+                          name="FriendlyExpression">TRIM(country_name)</property>
+                      </properties>
+                    </inputColumn>
+                    <inputColumn
+                      refId="Package\ETL Dim_Country\Cleaning data.Inputs[Derived Column Input].Columns[confederation]"
+                      cachedDataType="wstr"
+                      cachedLength="100"
+                      cachedName="confederation"
+                      errorOrTruncationOperation="Computation"
+                      errorRowDisposition="FailComponent"
+                      lineageId="Package\ETL Dim_Country\Unique values for Contries.Outputs[Sort Output].Columns[confederation]"
+                      truncationRowDisposition="FailComponent"
+                      usageType="readWrite">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.String"
+                          description="Derived Column Expression"
+                          name="Expression">[ISNULL](#{Package\ETL Dim_Country\Unique values for Contries.Outputs[Sort Output].Columns[confederation]}) ? "missing value" : ([LOWER]([TRIM](#{Package\ETL Dim_Country\Unique values for Contries.Outputs[Sort Output].Columns[confederation]})) == "europa" || [LOWER]([TRIM](#{Package\ETL Dim_Country\Unique values for Contries.Outputs[Sort Output].Columns[confederation]})) == "afrika" || [LOWER]([TRIM](#{Package\ETL Dim_Country\Unique values for Contries.Outputs[Sort Output].Columns[confederation]})) == "asien" || [LOWER]([TRIM](#{Package\ETL Dim_Country\Unique values for Contries.Outputs[Sort Output].Columns[confederation]})) == "amerika") ? [LOWER]([TRIM](#{Package\ETL Dim_Country\Unique values for Contries.Outputs[Sort Output].Columns[confederation]})) : "missing value"</property>
+                        <property
+                          containsID="true"
+                          dataType="System.String"
+                          description="Derived Column Friendly Expression"
+                          expressionType="Notify"
+                          name="FriendlyExpression">ISNULL(confederation) ? "missing value" : (LOWER(TRIM(confederation)) == "europa" || LOWER(TRIM(confederation)) == "afrika" || LOWER(TRIM(confederation)) == "asien" || LOWER(TRIM(confederation)) == "amerika") ? LOWER(TRIM(confederation)) : "missing value"</property>
+                      </properties>
+                    </inputColumn>
+                  </inputColumns>
+                  <externalMetadataColumns />
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\ETL Dim_Country\Cleaning data.Outputs[Derived Column Output]"
+                  description="Default Output of the Derived Column Transformation"
+                  exclusionGroup="1"
+                  name="Derived Column Output"
+                  synchronousInputId="Package\ETL Dim_Country\Cleaning data.Inputs[Derived Column Input]">
+                  <externalMetadataColumns />
+                </output>
+                <output
+                  refId="Package\ETL Dim_Country\Cleaning data.Outputs[Derived Column Error Output]"
+                  description="Error Output of the Derived Column Transformation"
+                  exclusionGroup="1"
+                  isErrorOut="true"
+                  name="Derived Column Error Output"
+                  synchronousInputId="Package\ETL Dim_Country\Cleaning data.Inputs[Derived Column Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\ETL Dim_Country\Cleaning data.Outputs[Derived Column Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\ETL Dim_Country\Cleaning data.Outputs[Derived Column Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\ETL Dim_Country\Cleaning data.Outputs[Derived Column Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\ETL Dim_Country\Cleaning data.Outputs[Derived Column Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\ETL Dim_Country\Data Conversion"
+              componentClassID="Microsoft.DataConvert"
+              contactInfo="Data Conversion;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;0"
+              description="Data Conversion"
+              name="Data Conversion"
+              usesDispositions="true">
+              <inputs>
+                <input
+                  refId="Package\ETL Dim_Country\Data Conversion.Inputs[Data Conversion Input]"
+                  name="Data Conversion Input">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\ETL Dim_Country\Data Conversion.Inputs[Data Conversion Input].Columns[country_id]"
+                      cachedDataType="wstr"
+                      cachedLength="50"
+                      cachedName="country_id"
+                      cachedSortKeyPosition="1"
+                      lineageId="Package\ETL Dim_Country\Unique values for Contries.Outputs[Sort Output].Columns[country_id]" />
+                    <inputColumn
+                      refId="Package\ETL Dim_Country\Data Conversion.Inputs[Data Conversion Input].Columns[country_name]"
+                      cachedDataType="wstr"
+                      cachedLength="150"
+                      cachedName="country_name"
+                      cachedSortKeyPosition="2"
+                      lineageId="Package\ETL Dim_Country\Unique values for Contries.Outputs[Sort Output].Columns[country_name]" />
+                    <inputColumn
+                      refId="Package\ETL Dim_Country\Data Conversion.Inputs[Data Conversion Input].Columns[confederation]"
+                      cachedDataType="wstr"
+                      cachedLength="100"
+                      cachedName="confederation"
+                      lineageId="Package\ETL Dim_Country\Unique values for Contries.Outputs[Sort Output].Columns[confederation]" />
+                  </inputColumns>
+                  <externalMetadataColumns />
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\ETL Dim_Country\Data Conversion.Outputs[Data Conversion Output]"
+                  exclusionGroup="1"
+                  name="Data Conversion Output"
+                  synchronousInputId="Package\ETL Dim_Country\Data Conversion.Inputs[Data Conversion Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\ETL Dim_Country\Data Conversion.Outputs[Data Conversion Output].Columns[country_id]"
+                      dataType="i4"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      lineageId="Package\ETL Dim_Country\Data Conversion.Outputs[Data Conversion Output].Columns[country_id]"
+                      name="country_id"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="Specifies the input column used as the source of data for the conversion."
+                          name="SourceInputColumnLineageID">#{Package\ETL Dim_Country\Unique values for Contries.Outputs[Sort Output].Columns[country_id]}</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                          name="FastParse">false</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\ETL Dim_Country\Data Conversion.Outputs[Data Conversion Output].Columns[country_name]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      length="80"
+                      lineageId="Package\ETL Dim_Country\Data Conversion.Outputs[Data Conversion Output].Columns[country_name]"
+                      name="country_name"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="Specifies the input column used as the source of data for the conversion."
+                          name="SourceInputColumnLineageID">#{Package\ETL Dim_Country\Unique values for Contries.Outputs[Sort Output].Columns[country_name]}</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                          name="FastParse">false</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\ETL Dim_Country\Data Conversion.Outputs[Data Conversion Output].Columns[confederation]"
+                      codePage="1252"
+                      dataType="str"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      length="20"
+                      lineageId="Package\ETL Dim_Country\Data Conversion.Outputs[Data Conversion Output].Columns[confederation]"
+                      name="confederation"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="Specifies the input column used as the source of data for the conversion."
+                          name="SourceInputColumnLineageID">#{Package\ETL Dim_Country\Unique values for Contries.Outputs[Sort Output].Columns[confederation]}</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                          name="FastParse">false</property>
+                      </properties>
+                    </outputColumn>
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+                <output
+                  refId="Package\ETL Dim_Country\Data Conversion.Outputs[Data Conversion Error Output]"
+                  exclusionGroup="1"
+                  isErrorOut="true"
+                  name="Data Conversion Error Output"
+                  synchronousInputId="Package\ETL Dim_Country\Data Conversion.Inputs[Data Conversion Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\ETL Dim_Country\Data Conversion.Outputs[Data Conversion Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\ETL Dim_Country\Data Conversion.Outputs[Data Conversion Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\ETL Dim_Country\Data Conversion.Outputs[Data Conversion Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\ETL Dim_Country\Data Conversion.Outputs[Data Conversion Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\ETL Dim_Country\LOAD data in Dim_Country"
+              componentClassID="Microsoft.OLEDBDestination"
+              contactInfo="OLE DB Destination;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;4"
+              description="OLE DB Destination"
+              name="LOAD data in Dim_Country"
+              usesDispositions="true"
+              version="4">
+              <properties>
+                <property
+                  dataType="System.Int32"
+                  description="The number of seconds before a command times out.  A value of 0 indicates an infinite time-out."
+                  name="CommandTimeout">0</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the name of the database object used to open a rowset."
+                  name="OpenRowset">[dbo].[Dim_Country]</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the variable that contains the name of the database object used to open a rowset."
+                  name="OpenRowsetVariable"></property>
+                <property
+                  dataType="System.String"
+                  description="The SQL command to be executed."
+                  name="SqlCommand"
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor"></property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the column code page to use when code page information is unavailable from the data source."
+                  name="DefaultCodePage">1252</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Forces the use of the DefaultCodePage property value when describing character data."
+                  name="AlwaysUseDefaultCodePage">false</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the mode used to access the database."
+                  name="AccessMode"
+                  typeConverter="AccessMode">3</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Indicates whether the values supplied for identity columns will be copied to the destination. If false, values for identity columns will be auto-generated at the destination. Applies only if fast load is turned on."
+                  name="FastLoadKeepIdentity">false</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Indicates whether the columns containing null will have null inserted in the destination. If false, columns containing null will have their default values inserted at the destination. Applies only if fast load is turned on."
+                  name="FastLoadKeepNulls">false</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies options to be used with fast load.  Applies only if fast load is turned on."
+                  name="FastLoadOptions">TABLOCK,CHECK_CONSTRAINTS</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies when commits are issued during data insertion.  A value of 0 specifies that one commit will be issued at the end of data insertion.  Applies only if fast load is turned on."
+                  name="FastLoadMaxInsertCommitSize">2147483647</property>
+              </properties>
+              <connections>
+                <connection
+                  refId="Package\ETL Dim_Country\LOAD data in Dim_Country.Connections[OleDbConnection]"
+                  connectionManagerID="{48255525-DF27-4D39-9F96-F9E61C00D4D5}:external"
+                  connectionManagerRefId="Project.ConnectionManagers[DESKTOP-TVVRCUR_SQLEXPRESS.FootballScoutingDW]"
+                  description="The OLE DB runtime connection used to access the database."
+                  name="OleDbConnection" />
+              </connections>
+              <inputs>
+                <input
+                  refId="Package\ETL Dim_Country\LOAD data in Dim_Country.Inputs[OLE DB Destination Input]"
+                  errorOrTruncationOperation="Insert"
+                  errorRowDisposition="FailComponent"
+                  hasSideEffects="true"
+                  name="OLE DB Destination Input">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\ETL Dim_Country\LOAD data in Dim_Country.Inputs[OLE DB Destination Input].Columns[country_id]"
+                      cachedDataType="i4"
+                      cachedName="country_id"
+                      externalMetadataColumnId="Package\ETL Dim_Country\LOAD data in Dim_Country.Inputs[OLE DB Destination Input].ExternalColumns[country_id]"
+                      lineageId="Package\ETL Dim_Country\Data Conversion.Outputs[Data Conversion Output].Columns[country_id]" />
+                    <inputColumn
+                      refId="Package\ETL Dim_Country\LOAD data in Dim_Country.Inputs[OLE DB Destination Input].Columns[country_name]"
+                      cachedDataType="wstr"
+                      cachedLength="80"
+                      cachedName="country_name"
+                      externalMetadataColumnId="Package\ETL Dim_Country\LOAD data in Dim_Country.Inputs[OLE DB Destination Input].ExternalColumns[country_name]"
+                      lineageId="Package\ETL Dim_Country\Data Conversion.Outputs[Data Conversion Output].Columns[country_name]" />
+                    <inputColumn
+                      refId="Package\ETL Dim_Country\LOAD data in Dim_Country.Inputs[OLE DB Destination Input].Columns[confederation]"
+                      cachedCodepage="1252"
+                      cachedDataType="str"
+                      cachedLength="20"
+                      cachedName="confederation"
+                      externalMetadataColumnId="Package\ETL Dim_Country\LOAD data in Dim_Country.Inputs[OLE DB Destination Input].ExternalColumns[confederation]"
+                      lineageId="Package\ETL Dim_Country\Data Conversion.Outputs[Data Conversion Output].Columns[confederation]" />
+                  </inputColumns>
+                  <externalMetadataColumns
+                    isUsed="True">
+                    <externalMetadataColumn
+                      refId="Package\ETL Dim_Country\LOAD data in Dim_Country.Inputs[OLE DB Destination Input].ExternalColumns[country_sid]"
+                      dataType="i4"
+                      name="country_sid" />
+                    <externalMetadataColumn
+                      refId="Package\ETL Dim_Country\LOAD data in Dim_Country.Inputs[OLE DB Destination Input].ExternalColumns[country_id]"
+                      dataType="i4"
+                      name="country_id" />
+                    <externalMetadataColumn
+                      refId="Package\ETL Dim_Country\LOAD data in Dim_Country.Inputs[OLE DB Destination Input].ExternalColumns[country_name]"
+                      dataType="wstr"
+                      length="80"
+                      name="country_name" />
+                    <externalMetadataColumn
+                      refId="Package\ETL Dim_Country\LOAD data in Dim_Country.Inputs[OLE DB Destination Input].ExternalColumns[confederation]"
+                      codePage="1252"
+                      dataType="str"
+                      length="20"
+                      name="confederation" />
+                  </externalMetadataColumns>
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\ETL Dim_Country\LOAD data in Dim_Country.Outputs[OLE DB Destination Error Output]"
+                  exclusionGroup="1"
+                  isErrorOut="true"
+                  name="OLE DB Destination Error Output"
+                  synchronousInputId="Package\ETL Dim_Country\LOAD data in Dim_Country.Inputs[OLE DB Destination Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\ETL Dim_Country\LOAD data in Dim_Country.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\ETL Dim_Country\LOAD data in Dim_Country.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\ETL Dim_Country\LOAD data in Dim_Country.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\ETL Dim_Country\LOAD data in Dim_Country.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\ETL Dim_Country\READ data for Dim_Country"
+              componentClassID="Microsoft.OLEDBSource"
+              contactInfo="OLE DB Source;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;7"
+              description="OLE DB Source"
+              name="READ data for Dim_Country"
+              usesDispositions="true"
+              version="7">
+              <properties>
+                <property
+                  dataType="System.Int32"
+                  description="The number of seconds before a command times out.  A value of 0 indicates an infinite time-out."
+                  name="CommandTimeout">0</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the name of the database object used to open a rowset."
+                  name="OpenRowset">[dbo].[countries]</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the variable that contains the name of the database object used to open a rowset."
+                  name="OpenRowsetVariable"></property>
+                <property
+                  dataType="System.String"
+                  description="The SQL command to be executed."
+                  name="SqlCommand"
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor">SELECT country_id, country_name, confederation 
+FROM countries 
+WHERE country_name IS NOT NULL AND country_name &lt;&gt; '';</property>
+                <property
+                  dataType="System.String"
+                  description="The variable that contains the SQL command to be executed."
+                  name="SqlCommandVariable"></property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the column code page to use when code page information is unavailable from the data source."
+                  name="DefaultCodePage">1252</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Forces the use of the DefaultCodePage property value when describing character data."
+                  name="AlwaysUseDefaultCodePage">false</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the mode used to access the database."
+                  name="AccessMode"
+                  typeConverter="AccessMode">0</property>
+                <property
+                  dataType="System.String"
+                  description="The mappings between the parameters in the SQL command and variables."
+                  name="ParameterMapping"></property>
+              </properties>
+              <connections>
+                <connection
+                  refId="Package\ETL Dim_Country\READ data for Dim_Country.Connections[OleDbConnection]"
+                  connectionManagerID="{286E3C80-51ED-4B50-9C64-31A3614A916B}:external"
+                  connectionManagerRefId="Project.ConnectionManagers[DESKTOP-TVVRCUR_SQLEXPRESS.FootballScouting_Staging]"
+                  description="The OLE DB runtime connection used to access the database."
+                  name="OleDbConnection" />
+              </connections>
+              <outputs>
+                <output
+                  refId="Package\ETL Dim_Country\READ data for Dim_Country.Outputs[OLE DB Source Output]"
+                  name="OLE DB Source Output">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\ETL Dim_Country\READ data for Dim_Country.Outputs[OLE DB Source Output].Columns[country_id]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\ETL Dim_Country\READ data for Dim_Country.Outputs[OLE DB Source Output].ExternalColumns[country_id]"
+                      length="50"
+                      lineageId="Package\ETL Dim_Country\READ data for Dim_Country.Outputs[OLE DB Source Output].Columns[country_id]"
+                      name="country_id"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\ETL Dim_Country\READ data for Dim_Country.Outputs[OLE DB Source Output].Columns[country_name]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\ETL Dim_Country\READ data for Dim_Country.Outputs[OLE DB Source Output].ExternalColumns[country_name]"
+                      length="150"
+                      lineageId="Package\ETL Dim_Country\READ data for Dim_Country.Outputs[OLE DB Source Output].Columns[country_name]"
+                      name="country_name"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\ETL Dim_Country\READ data for Dim_Country.Outputs[OLE DB Source Output].Columns[confederation]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\ETL Dim_Country\READ data for Dim_Country.Outputs[OLE DB Source Output].ExternalColumns[confederation]"
+                      length="100"
+                      lineageId="Package\ETL Dim_Country\READ data for Dim_Country.Outputs[OLE DB Source Output].Columns[confederation]"
+                      name="confederation"
+                      truncationRowDisposition="FailComponent" />
+                  </outputColumns>
+                  <externalMetadataColumns
+                    isUsed="True">
+                    <externalMetadataColumn
+                      refId="Package\ETL Dim_Country\READ data for Dim_Country.Outputs[OLE DB Source Output].ExternalColumns[country_id]"
+                      dataType="wstr"
+                      length="50"
+                      name="country_id" />
+                    <externalMetadataColumn
+                      refId="Package\ETL Dim_Country\READ data for Dim_Country.Outputs[OLE DB Source Output].ExternalColumns[country_name]"
+                      dataType="wstr"
+                      length="150"
+                      name="country_name" />
+                    <externalMetadataColumn
+                      refId="Package\ETL Dim_Country\READ data for Dim_Country.Outputs[OLE DB Source Output].ExternalColumns[confederation]"
+                      dataType="wstr"
+                      length="100"
+                      name="confederation" />
+                  </externalMetadataColumns>
+                </output>
+                <output
+                  refId="Package\ETL Dim_Country\READ data for Dim_Country.Outputs[OLE DB Source Error Output]"
+                  isErrorOut="true"
+                  name="OLE DB Source Error Output">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\ETL Dim_Country\READ data for Dim_Country.Outputs[OLE DB Source Error Output].Columns[country_id]"
+                      dataType="wstr"
+                      length="50"
+                      lineageId="Package\ETL Dim_Country\READ data for Dim_Country.Outputs[OLE DB Source Error Output].Columns[country_id]"
+                      name="country_id" />
+                    <outputColumn
+                      refId="Package\ETL Dim_Country\READ data for Dim_Country.Outputs[OLE DB Source Error Output].Columns[country_name]"
+                      dataType="wstr"
+                      length="150"
+                      lineageId="Package\ETL Dim_Country\READ data for Dim_Country.Outputs[OLE DB Source Error Output].Columns[country_name]"
+                      name="country_name" />
+                    <outputColumn
+                      refId="Package\ETL Dim_Country\READ data for Dim_Country.Outputs[OLE DB Source Error Output].Columns[confederation]"
+                      dataType="wstr"
+                      length="100"
+                      lineageId="Package\ETL Dim_Country\READ data for Dim_Country.Outputs[OLE DB Source Error Output].Columns[confederation]"
+                      name="confederation" />
+                    <outputColumn
+                      refId="Package\ETL Dim_Country\READ data for Dim_Country.Outputs[OLE DB Source Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\ETL Dim_Country\READ data for Dim_Country.Outputs[OLE DB Source Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\ETL Dim_Country\READ data for Dim_Country.Outputs[OLE DB Source Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\ETL Dim_Country\READ data for Dim_Country.Outputs[OLE DB Source Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\ETL Dim_Country\Unique values for Contries"
+              componentClassID="Microsoft.Sort"
+              contactInfo="Sort;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;1"
+              description="Sorts input data in ascending or descending order when it cannot be sorted at its source. For example, sort sales data by 'customer id' before it is written to a flat file and delivered to another department. Note: We do not recommend this transformation for large data flows."
+              name="Unique values for Contries"
+              version="1">
+              <properties>
+                <property
+                  dataType="System.Boolean"
+                  description="Indicates whether the Sort transformation removes rows with duplicate sort values."
+                  name="EliminateDuplicates">true</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the maximum number of threads to use for sorting."
+                  expressionType="Notify"
+                  name="MaximumThreads">-1</property>
+              </properties>
+              <inputs>
+                <input
+                  refId="Package\ETL Dim_Country\Unique values for Contries.Inputs[Sort Input]"
+                  name="Sort Input">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\ETL Dim_Country\Unique values for Contries.Inputs[Sort Input].Columns[country_id]"
+                      cachedDataType="wstr"
+                      cachedLength="50"
+                      cachedName="country_id"
+                      lineageId="Package\ETL Dim_Country\READ data for Dim_Country.Outputs[OLE DB Source Output].Columns[country_id]">
+                      <properties>
+                        <property
+                          dataType="System.Int32"
+                          description="Specifies the comparison options for character data."
+                          name="NewComparisonFlags">0</property>
+                        <property
+                          dataType="System.Int32"
+                          description="Specifies the sort order of the column."
+                          name="NewSortKeyPosition">1</property>
+                      </properties>
+                    </inputColumn>
+                    <inputColumn
+                      refId="Package\ETL Dim_Country\Unique values for Contries.Inputs[Sort Input].Columns[country_name]"
+                      cachedDataType="wstr"
+                      cachedLength="150"
+                      cachedName="country_name"
+                      lineageId="Package\ETL Dim_Country\READ data for Dim_Country.Outputs[OLE DB Source Output].Columns[country_name]">
+                      <properties>
+                        <property
+                          dataType="System.Int32"
+                          description="Specifies the comparison options for character data."
+                          name="NewComparisonFlags">0</property>
+                        <property
+                          dataType="System.Int32"
+                          description="Specifies the sort order of the column."
+                          name="NewSortKeyPosition">2</property>
+                      </properties>
+                    </inputColumn>
+                    <inputColumn
+                      refId="Package\ETL Dim_Country\Unique values for Contries.Inputs[Sort Input].Columns[confederation]"
+                      cachedDataType="wstr"
+                      cachedLength="100"
+                      cachedName="confederation"
+                      lineageId="Package\ETL Dim_Country\READ data for Dim_Country.Outputs[OLE DB Source Output].Columns[confederation]">
+                      <properties>
+                        <property
+                          dataType="System.Int32"
+                          description="Specifies the comparison options for character data."
+                          name="NewComparisonFlags">0</property>
+                        <property
+                          dataType="System.Int32"
+                          description="Specifies the sort order of the column."
+                          name="NewSortKeyPosition">0</property>
+                      </properties>
+                    </inputColumn>
+                  </inputColumns>
+                  <externalMetadataColumns />
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\ETL Dim_Country\Unique values for Contries.Outputs[Sort Output]"
+                  isSorted="true"
+                  name="Sort Output">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\ETL Dim_Country\Unique values for Contries.Outputs[Sort Output].Columns[country_id]"
+                      dataType="wstr"
+                      length="50"
+                      lineageId="Package\ETL Dim_Country\Unique values for Contries.Outputs[Sort Output].Columns[country_id]"
+                      name="country_id"
+                      sortKeyPosition="1">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="Specifies the lineage identifier of the input column that is associated with this output column."
+                          name="SortColumnId">#{Package\ETL Dim_Country\READ data for Dim_Country.Outputs[OLE DB Source Output].Columns[country_id]}</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\ETL Dim_Country\Unique values for Contries.Outputs[Sort Output].Columns[country_name]"
+                      dataType="wstr"
+                      length="150"
+                      lineageId="Package\ETL Dim_Country\Unique values for Contries.Outputs[Sort Output].Columns[country_name]"
+                      name="country_name"
+                      sortKeyPosition="2">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="Specifies the lineage identifier of the input column that is associated with this output column."
+                          name="SortColumnId">#{Package\ETL Dim_Country\READ data for Dim_Country.Outputs[OLE DB Source Output].Columns[country_name]}</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\ETL Dim_Country\Unique values for Contries.Outputs[Sort Output].Columns[confederation]"
+                      dataType="wstr"
+                      length="100"
+                      lineageId="Package\ETL Dim_Country\Unique values for Contries.Outputs[Sort Output].Columns[confederation]"
+                      name="confederation">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="Specifies the lineage identifier of the input column that is associated with this output column."
+                          name="SortColumnId">#{Package\ETL Dim_Country\READ data for Dim_Country.Outputs[OLE DB Source Output].Columns[confederation]}</property>
+                      </properties>
+                    </outputColumn>
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+          </components>
+          <paths>
+            <path
+              refId="Package\ETL Dim_Country.Paths[Data Conversion Output]"
+              endId="Package\ETL Dim_Country\LOAD data in Dim_Country.Inputs[OLE DB Destination Input]"
+              name="Data Conversion Output"
+              startId="Package\ETL Dim_Country\Data Conversion.Outputs[Data Conversion Output]" />
+            <path
+              refId="Package\ETL Dim_Country.Paths[Derived Column Output]"
+              endId="Package\ETL Dim_Country\Data Conversion.Inputs[Data Conversion Input]"
+              name="Derived Column Output"
+              startId="Package\ETL Dim_Country\Cleaning data.Outputs[Derived Column Output]" />
+            <path
+              refId="Package\ETL Dim_Country.Paths[OLE DB Source Output]"
+              endId="Package\ETL Dim_Country\Unique values for Contries.Inputs[Sort Input]"
+              name="OLE DB Source Output"
+              startId="Package\ETL Dim_Country\READ data for Dim_Country.Outputs[OLE DB Source Output]" />
+            <path
+              refId="Package\ETL Dim_Country.Paths[Sort Output]"
+              endId="Package\ETL Dim_Country\Cleaning data.Inputs[Derived Column Input]"
+              name="Sort Output"
+              startId="Package\ETL Dim_Country\Unique values for Contries.Outputs[Sort Output]" />
+          </paths>
+        </pipeline>
+      </DTS:ObjectData>
+    </DTS:Executable>
+  </DTS:Executables>
+  <DTS:PrecedenceConstraints>
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint]"
+      DTS:CreationName=""
+      DTS:DTSID="{D17AB480-CBD2-498C-A46B-CC202F39AC07}"
+      DTS:From="Package\DROP and CREATE DimCountry"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint"
+      DTS:To="Package\ETL Dim_Country" />
+  </DTS:PrecedenceConstraints>
+  <DTS:DesignTimeProperties><![CDATA[<?xml version="1.0"?>
+<!--This CDATA section contains the layout information of the package. The section includes information such as (x,y) coordinates, width, and height.-->
+<!--If you manually edit this section and make a mistake, you can delete it. -->
+<!--The package will still be able to load normally but the previous layout information will be lost and the designer will automatically re-arrange the elements on the design surface.-->
+<Objects
+  Version="8">
+  <!--Each node below will contain properties that do not affect runtime behavior.-->
+  <Package
+    design-time-name="Package">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
+        <NodeLayout
+          Size="231.2,41.6"
+          Id="Package\DROP and CREATE DimCountry"
+          TopLeft="69.1666628875668,38.9999997287989" />
+        <NodeLayout
+          Size="160.8,41.6"
+          Id="Package\ETL Dim_Country"
+          TopLeft="109.999993989865,133.466665738556" />
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint]"
+          TopLeft="187.583328438716,80.5999997287989">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,52.8666660097571"
+              Start="0,0"
+              End="0,45.3666660097571">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,45.3666660097571" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+      </GraphLayout>
+    </LayoutInfo>
+  </Package>
+  <TaskHost
+    design-time-name="Package\ETL Dim_Country">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="16" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
+        <NodeLayout
+          Size="204,41.6"
+          Id="Package\ETL Dim_Country\LOAD data in Dim_Country"
+          TopLeft="317.499982652565,258.266664870712" />
+        <NodeLayout
+          Size="156,41.6"
+          Id="Package\ETL Dim_Country\Data Conversion"
+          TopLeft="45.8333308291105,259.133331531353" />
+        <NodeLayout
+          Size="200.8,41.6"
+          Id="Package\ETL Dim_Country\Unique values for Contries"
+          TopLeft="32.4999982242784,103.999999276797" />
+        <NodeLayout
+          Size="208.8,41.6"
+          Id="Package\ETL Dim_Country\READ data for Dim_Country"
+          TopLeft="34.9999980876844,27.7333331404792" />
+        <NodeLayout
+          Size="142.4,41.6"
+          Id="Package\ETL Dim_Country\Cleaning data"
+          TopLeft="48.3333306925166,192.399998662075" />
+        <EdgeLayout
+          Id="Package\ETL Dim_Country.Paths[Sort Output]"
+          TopLeft="132.899998224278,145.599999276797">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="-13.3666675317618,46.7999993852775"
+              Start="0,0"
+              End="-13.3666675317618,39.2999993852775">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,19.3999996926387" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,19.3999996926387"
+                    Point2="0,23.3999996926387"
+                    Point3="-4,23.3999996926387" />
+                  <mssgle:LineSegment
+                    End="-9.36666753176182,23.3999996926387" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-9.36666753176182,23.3999996926387"
+                    Point2="-13.3666675317618,23.3999996926387"
+                    Point3="-13.3666675317618,27.3999996926387" />
+                  <mssgle:LineSegment
+                    End="-13.3666675317618,39.2999993852775" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\ETL Dim_Country.Paths[OLE DB Source Output]"
+          TopLeft="136.149998155981,69.3333331404792">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,34.6666661363178"
+              Start="0,0"
+              End="0,27.1666661363178">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,27.1666661363178" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\ETL Dim_Country.Paths[Derived Column Output]"
+          TopLeft="121.683330760814,233.999998662075">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,25.133332869278"
+              Start="0,0"
+              End="0,17.633332869278">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,17.633332869278" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\ETL Dim_Country.Paths[Data Conversion Output]"
+          TopLeft="201.83333082911,279.499998201033">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="115.666651823455,0"
+              Start="0,0"
+              End="108.166651823455,0">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="108.166651823455,0" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+      </GraphLayout>
+    </LayoutInfo>
+  </TaskHost>
+  <PipelineComponentMetadata
+    design-time-name="Package\ETL Dim_Country\READ data for Dim_Country">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+      <Property>
+        <Name>TableInfoObjectType</Name>
+        <Value
+          type="q2:string">Table</Value>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <PipelineComponentMetadata
+    design-time-name="Package\ETL Dim_Country\LOAD data in Dim_Country">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+      <Property>
+        <Name>TableInfoObjectType</Name>
+        <Value
+          type="q2:string">Table</Value>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+</Objects>]]></DTS:DesignTimeProperties>
+</DTS:Executable>

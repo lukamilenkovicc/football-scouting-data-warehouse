@@ -1,0 +1,1497 @@
+<?xml version="1.0"?>
+<DTS:Executable xmlns:DTS="www.microsoft.com/SqlServer/Dts"
+  DTS:refId="Package"
+  DTS:CreationDate="6/13/2026 1:48:07 PM"
+  DTS:CreationName="Microsoft.Package"
+  DTS:CreatorComputerName="DESKTOP-TVVRCUR"
+  DTS:CreatorName="DESKTOP-TVVRCUR\Korisnik"
+  DTS:DTSID="{E40BE63B-C2BE-4F65-9FFA-5E4813F7A6E4}"
+  DTS:ExecutableType="Microsoft.Package"
+  DTS:LastModifiedProductVersion="17.0.1016.0"
+  DTS:LocaleID="1033"
+  DTS:ObjectName="Dim_Date"
+  DTS:PackageType="5"
+  DTS:VersionBuild="14"
+  DTS:VersionGUID="{C6503453-9D46-4D47-9B21-1141DFECF598}">
+  <DTS:Property
+    DTS:Name="PackageFormatVersion">8</DTS:Property>
+  <DTS:Variables />
+  <DTS:Executables>
+    <DTS:Executable
+      DTS:refId="Package\DROP and CREATE Dim_Date"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:Description="Execute SQL Task"
+      DTS:DTSID="{C529A011-6243-4896-BD01-4D2EC620987D}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="DROP and CREATE Dim_Date"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2025; © 2025 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{48255525-DF27-4D39-9F96-F9E61C00D4D5}"
+          SQLTask:SqlStatementSource="&#xA;IF EXISTS&#xA;&#x9;(SELECT *&#xA;&#x9;FROM INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS&#xA;&#x9;WHERE CONSTRAINT_NAME = 'FK_Fact_Appearances_Dim_Date') -- Menjamo naziv Constraint-a&#xA;&#xA;BEGIN&#xA;&#x9;&#xA;&#x9;ALTER TABLE [dbo].[Fact_Appearances] DROP CONSTRAINT [FK_Fact_Appearances_Dim_Date] -- Menjamo ovu liniju&#xA;END;&#xA;&#xA;&#xA;&#xA;IF EXISTS&#xA;&#x9;(SELECT *&#xA;&#x9;FROM INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS&#xA;&#x9;WHERE CONSTRAINT_NAME = 'FK_Fact_Valuations_Dim_Date') -- Menjamo naziv Constraint-a&#xA;&#xA;BEGIN&#xA;&#x9;&#xA;&#x9;ALTER TABLE [dbo].[Fact_Valuations] DROP CONSTRAINT [FK_Fact_Valuations_Dim_Date] -- Menjamo ovu liniju&#xA;END;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;IF EXISTS&#xA;&#x9;(SELECT *&#xA;&#x9;FROM sysobjects&#xA;&#x9;WHERE id = OBJECT_ID(N'Dim_Date')) -- Menjamo naziv tabele&#xA;BEGIN&#xA;&#x9;-- KOMANDA ZA DROP TABLE&#xA;&#x9;IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Dim_Date]') AND type in (N'U'))&#xA;&#x9;DROP TABLE [dbo].[Dim_Date]&#xA;&#xA;&#xA;&#x9;-- KOMANDA ZA CREATE TABLE&#xA;CREATE TABLE [dbo].[Dim_Date](&#xA;&#x9;[date_sid] [int] NOT NULL,&#xA;&#x9;[year] [int] NOT NULL,&#xA;&#x9;[quarter] [char](2) NOT NULL,&#xA;&#x9;[month] [int] NOT NULL,&#xA;&#x9;[day] [int] NOT NULL,&#xA;&#x9;[season] [varchar](10) NOT NULL,&#xA;PRIMARY KEY CLUSTERED &#xA;(&#xA;&#x9;[date_sid] ASC&#xA;)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]&#xA;) ON [PRIMARY]&#xA;&#xA;&#xA;ALTER TABLE [dbo].[Dim_Date]  WITH CHECK ADD  CONSTRAINT [CHK_Date_Quarter] CHECK  (([quarter]='Q4' OR [quarter]='Q3' OR [quarter]='Q2' OR [quarter]='Q1'))&#xA;&#xA;&#xA;ALTER TABLE [dbo].[Dim_Date] CHECK CONSTRAINT [CHK_Date_Quarter]&#xA;&#xA;&#xA;&#xA;END&#xA;&#xA;&#xA;&#xA;&#xA;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\ETL Dim_Date"
+      DTS:CreationName="Microsoft.Pipeline"
+      DTS:Description="Data Flow Task"
+      DTS:DTSID="{3A65C06B-5600-44BB-A578-30B4AEBAE41B}"
+      DTS:ExecutableType="Microsoft.Pipeline"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="ETL Dim_Date"
+      DTS:TaskContact="Performs high-performance data extraction, transformation and loading;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <pipeline
+          version="1">
+          <components>
+            <component
+              refId="Package\ETL Dim_Date\Data Conversion"
+              componentClassID="Microsoft.DataConvert"
+              contactInfo="Data Conversion;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;0"
+              description="Data Conversion"
+              name="Data Conversion"
+              usesDispositions="true">
+              <inputs>
+                <input
+                  refId="Package\ETL Dim_Date\Data Conversion.Inputs[Data Conversion Input]"
+                  name="Data Conversion Input">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\ETL Dim_Date\Data Conversion.Inputs[Data Conversion Input].Columns[date]"
+                      cachedDataType="wstr"
+                      cachedLength="50"
+                      cachedName="date"
+                      lineageId="Package\ETL Dim_Date\Union All.Outputs[Union All Output 1].Columns[date]" />
+                  </inputColumns>
+                  <externalMetadataColumns />
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\ETL Dim_Date\Data Conversion.Outputs[Data Conversion Output]"
+                  exclusionGroup="1"
+                  name="Data Conversion Output"
+                  synchronousInputId="Package\ETL Dim_Date\Data Conversion.Inputs[Data Conversion Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\ETL Dim_Date\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of date]"
+                      dataType="dbDate"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      lineageId="Package\ETL Dim_Date\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of date]"
+                      name="Copy of date"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="Specifies the input column used as the source of data for the conversion."
+                          name="SourceInputColumnLineageID">#{Package\ETL Dim_Date\Union All.Outputs[Union All Output 1].Columns[date]}</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                          name="FastParse">false</property>
+                      </properties>
+                    </outputColumn>
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+                <output
+                  refId="Package\ETL Dim_Date\Data Conversion.Outputs[Data Conversion Error Output]"
+                  exclusionGroup="1"
+                  isErrorOut="true"
+                  name="Data Conversion Error Output"
+                  synchronousInputId="Package\ETL Dim_Date\Data Conversion.Inputs[Data Conversion Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\ETL Dim_Date\Data Conversion.Outputs[Data Conversion Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\ETL Dim_Date\Data Conversion.Outputs[Data Conversion Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\ETL Dim_Date\Data Conversion.Outputs[Data Conversion Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\ETL Dim_Date\Data Conversion.Outputs[Data Conversion Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\ETL Dim_Date\LOAD Data for Dim_Date"
+              componentClassID="Microsoft.OLEDBDestination"
+              contactInfo="OLE DB Destination;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;4"
+              description="OLE DB Destination"
+              name="LOAD Data for Dim_Date"
+              usesDispositions="true"
+              version="4">
+              <properties>
+                <property
+                  dataType="System.Int32"
+                  description="The number of seconds before a command times out.  A value of 0 indicates an infinite time-out."
+                  name="CommandTimeout">0</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the name of the database object used to open a rowset."
+                  name="OpenRowset">[dbo].[Dim_Date]</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the variable that contains the name of the database object used to open a rowset."
+                  name="OpenRowsetVariable"></property>
+                <property
+                  dataType="System.String"
+                  description="The SQL command to be executed."
+                  name="SqlCommand"
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor"></property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the column code page to use when code page information is unavailable from the data source."
+                  name="DefaultCodePage">1252</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Forces the use of the DefaultCodePage property value when describing character data."
+                  name="AlwaysUseDefaultCodePage">false</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the mode used to access the database."
+                  name="AccessMode"
+                  typeConverter="AccessMode">3</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Indicates whether the values supplied for identity columns will be copied to the destination. If false, values for identity columns will be auto-generated at the destination. Applies only if fast load is turned on."
+                  name="FastLoadKeepIdentity">false</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Indicates whether the columns containing null will have null inserted in the destination. If false, columns containing null will have their default values inserted at the destination. Applies only if fast load is turned on."
+                  name="FastLoadKeepNulls">false</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies options to be used with fast load.  Applies only if fast load is turned on."
+                  name="FastLoadOptions">TABLOCK,CHECK_CONSTRAINTS</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies when commits are issued during data insertion.  A value of 0 specifies that one commit will be issued at the end of data insertion.  Applies only if fast load is turned on."
+                  name="FastLoadMaxInsertCommitSize">2147483647</property>
+              </properties>
+              <connections>
+                <connection
+                  refId="Package\ETL Dim_Date\LOAD Data for Dim_Date.Connections[OleDbConnection]"
+                  connectionManagerID="{48255525-DF27-4D39-9F96-F9E61C00D4D5}:external"
+                  connectionManagerRefId="Project.ConnectionManagers[DESKTOP-TVVRCUR_SQLEXPRESS.FootballScoutingDW]"
+                  description="The OLE DB runtime connection used to access the database."
+                  name="OleDbConnection" />
+              </connections>
+              <inputs>
+                <input
+                  refId="Package\ETL Dim_Date\LOAD Data for Dim_Date.Inputs[OLE DB Destination Input]"
+                  errorOrTruncationOperation="Insert"
+                  errorRowDisposition="FailComponent"
+                  hasSideEffects="true"
+                  name="OLE DB Destination Input">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\ETL Dim_Date\LOAD Data for Dim_Date.Inputs[OLE DB Destination Input].Columns[date_sid]"
+                      cachedDataType="i4"
+                      cachedName="date_sid"
+                      cachedSortKeyPosition="1"
+                      externalMetadataColumnId="Package\ETL Dim_Date\LOAD Data for Dim_Date.Inputs[OLE DB Destination Input].ExternalColumns[date_sid]"
+                      lineageId="Package\ETL Dim_Date\REMOVE duplicates.Outputs[Sort Output].Columns[date_sid]" />
+                    <inputColumn
+                      refId="Package\ETL Dim_Date\LOAD Data for Dim_Date.Inputs[OLE DB Destination Input].Columns[year]"
+                      cachedDataType="i4"
+                      cachedName="year"
+                      externalMetadataColumnId="Package\ETL Dim_Date\LOAD Data for Dim_Date.Inputs[OLE DB Destination Input].ExternalColumns[year]"
+                      lineageId="Package\ETL Dim_Date\REMOVE duplicates.Outputs[Sort Output].Columns[year]" />
+                    <inputColumn
+                      refId="Package\ETL Dim_Date\LOAD Data for Dim_Date.Inputs[OLE DB Destination Input].Columns[month]"
+                      cachedDataType="i4"
+                      cachedName="month"
+                      externalMetadataColumnId="Package\ETL Dim_Date\LOAD Data for Dim_Date.Inputs[OLE DB Destination Input].ExternalColumns[month]"
+                      lineageId="Package\ETL Dim_Date\REMOVE duplicates.Outputs[Sort Output].Columns[month]" />
+                    <inputColumn
+                      refId="Package\ETL Dim_Date\LOAD Data for Dim_Date.Inputs[OLE DB Destination Input].Columns[day]"
+                      cachedDataType="i4"
+                      cachedName="day"
+                      externalMetadataColumnId="Package\ETL Dim_Date\LOAD Data for Dim_Date.Inputs[OLE DB Destination Input].ExternalColumns[day]"
+                      lineageId="Package\ETL Dim_Date\REMOVE duplicates.Outputs[Sort Output].Columns[day]" />
+                    <inputColumn
+                      refId="Package\ETL Dim_Date\LOAD Data for Dim_Date.Inputs[OLE DB Destination Input].Columns[quarter]"
+                      cachedCodepage="1252"
+                      cachedDataType="str"
+                      cachedLength="2"
+                      cachedName="quarter"
+                      externalMetadataColumnId="Package\ETL Dim_Date\LOAD Data for Dim_Date.Inputs[OLE DB Destination Input].ExternalColumns[quarter]"
+                      lineageId="Package\ETL Dim_Date\REMOVE duplicates.Outputs[Sort Output].Columns[quarter]" />
+                    <inputColumn
+                      refId="Package\ETL Dim_Date\LOAD Data for Dim_Date.Inputs[OLE DB Destination Input].Columns[season]"
+                      cachedCodepage="1252"
+                      cachedDataType="str"
+                      cachedLength="10"
+                      cachedName="season"
+                      externalMetadataColumnId="Package\ETL Dim_Date\LOAD Data for Dim_Date.Inputs[OLE DB Destination Input].ExternalColumns[season]"
+                      lineageId="Package\ETL Dim_Date\REMOVE duplicates.Outputs[Sort Output].Columns[season]" />
+                  </inputColumns>
+                  <externalMetadataColumns
+                    isUsed="True">
+                    <externalMetadataColumn
+                      refId="Package\ETL Dim_Date\LOAD Data for Dim_Date.Inputs[OLE DB Destination Input].ExternalColumns[date_sid]"
+                      dataType="i4"
+                      name="date_sid" />
+                    <externalMetadataColumn
+                      refId="Package\ETL Dim_Date\LOAD Data for Dim_Date.Inputs[OLE DB Destination Input].ExternalColumns[year]"
+                      dataType="i4"
+                      name="year" />
+                    <externalMetadataColumn
+                      refId="Package\ETL Dim_Date\LOAD Data for Dim_Date.Inputs[OLE DB Destination Input].ExternalColumns[quarter]"
+                      codePage="1252"
+                      dataType="str"
+                      length="2"
+                      name="quarter" />
+                    <externalMetadataColumn
+                      refId="Package\ETL Dim_Date\LOAD Data for Dim_Date.Inputs[OLE DB Destination Input].ExternalColumns[month]"
+                      dataType="i4"
+                      name="month" />
+                    <externalMetadataColumn
+                      refId="Package\ETL Dim_Date\LOAD Data for Dim_Date.Inputs[OLE DB Destination Input].ExternalColumns[day]"
+                      dataType="i4"
+                      name="day" />
+                    <externalMetadataColumn
+                      refId="Package\ETL Dim_Date\LOAD Data for Dim_Date.Inputs[OLE DB Destination Input].ExternalColumns[season]"
+                      codePage="1252"
+                      dataType="str"
+                      length="10"
+                      name="season" />
+                  </externalMetadataColumns>
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\ETL Dim_Date\LOAD Data for Dim_Date.Outputs[OLE DB Destination Error Output]"
+                  exclusionGroup="1"
+                  isErrorOut="true"
+                  name="OLE DB Destination Error Output"
+                  synchronousInputId="Package\ETL Dim_Date\LOAD Data for Dim_Date.Inputs[OLE DB Destination Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\ETL Dim_Date\LOAD Data for Dim_Date.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\ETL Dim_Date\LOAD Data for Dim_Date.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\ETL Dim_Date\LOAD Data for Dim_Date.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\ETL Dim_Date\LOAD Data for Dim_Date.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\ETL Dim_Date\READ table Appearances"
+              componentClassID="Microsoft.OLEDBSource"
+              contactInfo="OLE DB Source;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;7"
+              description="OLE DB Source"
+              name="READ table Appearances"
+              usesDispositions="true"
+              version="7">
+              <properties>
+                <property
+                  dataType="System.Int32"
+                  description="The number of seconds before a command times out.  A value of 0 indicates an infinite time-out."
+                  name="CommandTimeout">0</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the name of the database object used to open a rowset."
+                  name="OpenRowset">[dbo].[appearances]</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the variable that contains the name of the database object used to open a rowset."
+                  name="OpenRowsetVariable"></property>
+                <property
+                  dataType="System.String"
+                  description="The SQL command to be executed."
+                  name="SqlCommand"
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor"></property>
+                <property
+                  dataType="System.String"
+                  description="The variable that contains the SQL command to be executed."
+                  name="SqlCommandVariable"></property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the column code page to use when code page information is unavailable from the data source."
+                  name="DefaultCodePage">1252</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Forces the use of the DefaultCodePage property value when describing character data."
+                  name="AlwaysUseDefaultCodePage">false</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the mode used to access the database."
+                  name="AccessMode"
+                  typeConverter="AccessMode">0</property>
+                <property
+                  dataType="System.String"
+                  description="The mappings between the parameters in the SQL command and variables."
+                  name="ParameterMapping"></property>
+              </properties>
+              <connections>
+                <connection
+                  refId="Package\ETL Dim_Date\READ table Appearances.Connections[OleDbConnection]"
+                  connectionManagerID="{286E3C80-51ED-4B50-9C64-31A3614A916B}:external"
+                  connectionManagerRefId="Project.ConnectionManagers[DESKTOP-TVVRCUR_SQLEXPRESS.FootballScouting_Staging]"
+                  description="The OLE DB runtime connection used to access the database."
+                  name="OleDbConnection" />
+              </connections>
+              <outputs>
+                <output
+                  refId="Package\ETL Dim_Date\READ table Appearances.Outputs[OLE DB Source Output]"
+                  name="OLE DB Source Output">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\ETL Dim_Date\READ table Appearances.Outputs[OLE DB Source Output].Columns[date]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\ETL Dim_Date\READ table Appearances.Outputs[OLE DB Source Output].ExternalColumns[date]"
+                      length="50"
+                      lineageId="Package\ETL Dim_Date\READ table Appearances.Outputs[OLE DB Source Output].Columns[date]"
+                      name="date"
+                      truncationRowDisposition="FailComponent" />
+                  </outputColumns>
+                  <externalMetadataColumns
+                    isUsed="True">
+                    <externalMetadataColumn
+                      refId="Package\ETL Dim_Date\READ table Appearances.Outputs[OLE DB Source Output].ExternalColumns[appearance_id]"
+                      dataType="wstr"
+                      length="50"
+                      name="appearance_id" />
+                    <externalMetadataColumn
+                      refId="Package\ETL Dim_Date\READ table Appearances.Outputs[OLE DB Source Output].ExternalColumns[game_id]"
+                      dataType="wstr"
+                      length="50"
+                      name="game_id" />
+                    <externalMetadataColumn
+                      refId="Package\ETL Dim_Date\READ table Appearances.Outputs[OLE DB Source Output].ExternalColumns[player_id]"
+                      dataType="wstr"
+                      length="50"
+                      name="player_id" />
+                    <externalMetadataColumn
+                      refId="Package\ETL Dim_Date\READ table Appearances.Outputs[OLE DB Source Output].ExternalColumns[player_club_id]"
+                      dataType="wstr"
+                      length="50"
+                      name="player_club_id" />
+                    <externalMetadataColumn
+                      refId="Package\ETL Dim_Date\READ table Appearances.Outputs[OLE DB Source Output].ExternalColumns[player_current_club_id]"
+                      dataType="wstr"
+                      length="50"
+                      name="player_current_club_id" />
+                    <externalMetadataColumn
+                      refId="Package\ETL Dim_Date\READ table Appearances.Outputs[OLE DB Source Output].ExternalColumns[date]"
+                      dataType="wstr"
+                      length="50"
+                      name="date" />
+                    <externalMetadataColumn
+                      refId="Package\ETL Dim_Date\READ table Appearances.Outputs[OLE DB Source Output].ExternalColumns[player_name]"
+                      dataType="wstr"
+                      length="150"
+                      name="player_name" />
+                    <externalMetadataColumn
+                      refId="Package\ETL Dim_Date\READ table Appearances.Outputs[OLE DB Source Output].ExternalColumns[competition_id]"
+                      dataType="wstr"
+                      length="50"
+                      name="competition_id" />
+                    <externalMetadataColumn
+                      refId="Package\ETL Dim_Date\READ table Appearances.Outputs[OLE DB Source Output].ExternalColumns[goals]"
+                      dataType="wstr"
+                      length="50"
+                      name="goals" />
+                    <externalMetadataColumn
+                      refId="Package\ETL Dim_Date\READ table Appearances.Outputs[OLE DB Source Output].ExternalColumns[assists]"
+                      dataType="wstr"
+                      length="50"
+                      name="assists" />
+                    <externalMetadataColumn
+                      refId="Package\ETL Dim_Date\READ table Appearances.Outputs[OLE DB Source Output].ExternalColumns[minutes_played]"
+                      dataType="wstr"
+                      length="50"
+                      name="minutes_played" />
+                  </externalMetadataColumns>
+                </output>
+                <output
+                  refId="Package\ETL Dim_Date\READ table Appearances.Outputs[OLE DB Source Error Output]"
+                  isErrorOut="true"
+                  name="OLE DB Source Error Output">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\ETL Dim_Date\READ table Appearances.Outputs[OLE DB Source Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\ETL Dim_Date\READ table Appearances.Outputs[OLE DB Source Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\ETL Dim_Date\READ table Appearances.Outputs[OLE DB Source Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\ETL Dim_Date\READ table Appearances.Outputs[OLE DB Source Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                    <outputColumn
+                      refId="Package\ETL Dim_Date\READ table Appearances.Outputs[OLE DB Source Error Output].Columns[date]"
+                      dataType="wstr"
+                      length="50"
+                      lineageId="Package\ETL Dim_Date\READ table Appearances.Outputs[OLE DB Source Error Output].Columns[date]"
+                      name="date" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\ETL Dim_Date\READ table player_valuations"
+              componentClassID="Microsoft.OLEDBSource"
+              contactInfo="OLE DB Source;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;7"
+              description="OLE DB Source"
+              name="READ table player_valuations"
+              usesDispositions="true"
+              version="7">
+              <properties>
+                <property
+                  dataType="System.Int32"
+                  description="The number of seconds before a command times out.  A value of 0 indicates an infinite time-out."
+                  name="CommandTimeout">0</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the name of the database object used to open a rowset."
+                  name="OpenRowset">[dbo].[player_valuations]</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the variable that contains the name of the database object used to open a rowset."
+                  name="OpenRowsetVariable"></property>
+                <property
+                  dataType="System.String"
+                  description="The SQL command to be executed."
+                  name="SqlCommand"
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor"></property>
+                <property
+                  dataType="System.String"
+                  description="The variable that contains the SQL command to be executed."
+                  name="SqlCommandVariable"></property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the column code page to use when code page information is unavailable from the data source."
+                  name="DefaultCodePage">1252</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Forces the use of the DefaultCodePage property value when describing character data."
+                  name="AlwaysUseDefaultCodePage">false</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the mode used to access the database."
+                  name="AccessMode"
+                  typeConverter="AccessMode">0</property>
+                <property
+                  dataType="System.String"
+                  description="The mappings between the parameters in the SQL command and variables."
+                  name="ParameterMapping"></property>
+              </properties>
+              <connections>
+                <connection
+                  refId="Package\ETL Dim_Date\READ table player_valuations.Connections[OleDbConnection]"
+                  connectionManagerID="{286E3C80-51ED-4B50-9C64-31A3614A916B}:external"
+                  connectionManagerRefId="Project.ConnectionManagers[DESKTOP-TVVRCUR_SQLEXPRESS.FootballScouting_Staging]"
+                  description="The OLE DB runtime connection used to access the database."
+                  name="OleDbConnection" />
+              </connections>
+              <outputs>
+                <output
+                  refId="Package\ETL Dim_Date\READ table player_valuations.Outputs[OLE DB Source Output]"
+                  name="OLE DB Source Output">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\ETL Dim_Date\READ table player_valuations.Outputs[OLE DB Source Output].Columns[date]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\ETL Dim_Date\READ table player_valuations.Outputs[OLE DB Source Output].ExternalColumns[date]"
+                      length="50"
+                      lineageId="Package\ETL Dim_Date\READ table player_valuations.Outputs[OLE DB Source Output].Columns[date]"
+                      name="date"
+                      truncationRowDisposition="FailComponent" />
+                  </outputColumns>
+                  <externalMetadataColumns
+                    isUsed="True">
+                    <externalMetadataColumn
+                      refId="Package\ETL Dim_Date\READ table player_valuations.Outputs[OLE DB Source Output].ExternalColumns[player_id]"
+                      dataType="wstr"
+                      length="50"
+                      name="player_id" />
+                    <externalMetadataColumn
+                      refId="Package\ETL Dim_Date\READ table player_valuations.Outputs[OLE DB Source Output].ExternalColumns[date]"
+                      dataType="wstr"
+                      length="50"
+                      name="date" />
+                    <externalMetadataColumn
+                      refId="Package\ETL Dim_Date\READ table player_valuations.Outputs[OLE DB Source Output].ExternalColumns[market_value]"
+                      dataType="wstr"
+                      length="50"
+                      name="market_value" />
+                    <externalMetadataColumn
+                      refId="Package\ETL Dim_Date\READ table player_valuations.Outputs[OLE DB Source Output].ExternalColumns[current_club_id]"
+                      dataType="wstr"
+                      length="50"
+                      name="current_club_id" />
+                    <externalMetadataColumn
+                      refId="Package\ETL Dim_Date\READ table player_valuations.Outputs[OLE DB Source Output].ExternalColumns[player_club_domestic_competition_id]"
+                      dataType="wstr"
+                      length="50"
+                      name="player_club_domestic_competition_id" />
+                  </externalMetadataColumns>
+                </output>
+                <output
+                  refId="Package\ETL Dim_Date\READ table player_valuations.Outputs[OLE DB Source Error Output]"
+                  isErrorOut="true"
+                  name="OLE DB Source Error Output">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\ETL Dim_Date\READ table player_valuations.Outputs[OLE DB Source Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\ETL Dim_Date\READ table player_valuations.Outputs[OLE DB Source Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\ETL Dim_Date\READ table player_valuations.Outputs[OLE DB Source Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\ETL Dim_Date\READ table player_valuations.Outputs[OLE DB Source Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                    <outputColumn
+                      refId="Package\ETL Dim_Date\READ table player_valuations.Outputs[OLE DB Source Error Output].Columns[date]"
+                      dataType="wstr"
+                      length="50"
+                      lineageId="Package\ETL Dim_Date\READ table player_valuations.Outputs[OLE DB Source Error Output].Columns[date]"
+                      name="date" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\ETL Dim_Date\REMOVE duplicates"
+              componentClassID="Microsoft.Sort"
+              contactInfo="Sort;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;1"
+              description="Sorts input data in ascending or descending order when it cannot be sorted at its source. For example, sort sales data by 'customer id' before it is written to a flat file and delivered to another department. Note: We do not recommend this transformation for large data flows."
+              name="REMOVE duplicates"
+              version="1">
+              <properties>
+                <property
+                  dataType="System.Boolean"
+                  description="Indicates whether the Sort transformation removes rows with duplicate sort values."
+                  name="EliminateDuplicates">true</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the maximum number of threads to use for sorting."
+                  expressionType="Notify"
+                  name="MaximumThreads">-1</property>
+              </properties>
+              <inputs>
+                <input
+                  refId="Package\ETL Dim_Date\REMOVE duplicates.Inputs[Sort Input]"
+                  name="Sort Input">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\ETL Dim_Date\REMOVE duplicates.Inputs[Sort Input].Columns[date]"
+                      cachedDataType="wstr"
+                      cachedLength="50"
+                      cachedName="date"
+                      lineageId="Package\ETL Dim_Date\Union All.Outputs[Union All Output 1].Columns[date]">
+                      <properties>
+                        <property
+                          dataType="System.Int32"
+                          description="Specifies the comparison options for character data."
+                          name="NewComparisonFlags">0</property>
+                        <property
+                          dataType="System.Int32"
+                          description="Specifies the sort order of the column."
+                          name="NewSortKeyPosition">0</property>
+                      </properties>
+                    </inputColumn>
+                    <inputColumn
+                      refId="Package\ETL Dim_Date\REMOVE duplicates.Inputs[Sort Input].Columns[Copy of date]"
+                      cachedDataType="dbDate"
+                      cachedName="Copy of date"
+                      lineageId="Package\ETL Dim_Date\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of date]">
+                      <properties>
+                        <property
+                          dataType="System.Int32"
+                          description="Specifies the comparison options for character data."
+                          name="NewComparisonFlags">0</property>
+                        <property
+                          dataType="System.Int32"
+                          description="Specifies the sort order of the column."
+                          name="NewSortKeyPosition">0</property>
+                      </properties>
+                    </inputColumn>
+                    <inputColumn
+                      refId="Package\ETL Dim_Date\REMOVE duplicates.Inputs[Sort Input].Columns[date_sid]"
+                      cachedDataType="i4"
+                      cachedName="date_sid"
+                      lineageId="Package\ETL Dim_Date\TRANSFORM Data.Outputs[Derived Column Output].Columns[date_sid]">
+                      <properties>
+                        <property
+                          dataType="System.Int32"
+                          description="Specifies the comparison options for character data."
+                          name="NewComparisonFlags">0</property>
+                        <property
+                          dataType="System.Int32"
+                          description="Specifies the sort order of the column."
+                          name="NewSortKeyPosition">1</property>
+                      </properties>
+                    </inputColumn>
+                    <inputColumn
+                      refId="Package\ETL Dim_Date\REMOVE duplicates.Inputs[Sort Input].Columns[year]"
+                      cachedDataType="i4"
+                      cachedName="year"
+                      lineageId="Package\ETL Dim_Date\TRANSFORM Data.Outputs[Derived Column Output].Columns[year]">
+                      <properties>
+                        <property
+                          dataType="System.Int32"
+                          description="Specifies the comparison options for character data."
+                          name="NewComparisonFlags">0</property>
+                        <property
+                          dataType="System.Int32"
+                          description="Specifies the sort order of the column."
+                          name="NewSortKeyPosition">0</property>
+                      </properties>
+                    </inputColumn>
+                    <inputColumn
+                      refId="Package\ETL Dim_Date\REMOVE duplicates.Inputs[Sort Input].Columns[month]"
+                      cachedDataType="i4"
+                      cachedName="month"
+                      lineageId="Package\ETL Dim_Date\TRANSFORM Data.Outputs[Derived Column Output].Columns[month]">
+                      <properties>
+                        <property
+                          dataType="System.Int32"
+                          description="Specifies the comparison options for character data."
+                          name="NewComparisonFlags">0</property>
+                        <property
+                          dataType="System.Int32"
+                          description="Specifies the sort order of the column."
+                          name="NewSortKeyPosition">0</property>
+                      </properties>
+                    </inputColumn>
+                    <inputColumn
+                      refId="Package\ETL Dim_Date\REMOVE duplicates.Inputs[Sort Input].Columns[day]"
+                      cachedDataType="i4"
+                      cachedName="day"
+                      lineageId="Package\ETL Dim_Date\TRANSFORM Data.Outputs[Derived Column Output].Columns[day]">
+                      <properties>
+                        <property
+                          dataType="System.Int32"
+                          description="Specifies the comparison options for character data."
+                          name="NewComparisonFlags">0</property>
+                        <property
+                          dataType="System.Int32"
+                          description="Specifies the sort order of the column."
+                          name="NewSortKeyPosition">0</property>
+                      </properties>
+                    </inputColumn>
+                    <inputColumn
+                      refId="Package\ETL Dim_Date\REMOVE duplicates.Inputs[Sort Input].Columns[quarter]"
+                      cachedCodepage="1252"
+                      cachedDataType="str"
+                      cachedLength="2"
+                      cachedName="quarter"
+                      lineageId="Package\ETL Dim_Date\TRANSFORM Data.Outputs[Derived Column Output].Columns[quarter]">
+                      <properties>
+                        <property
+                          dataType="System.Int32"
+                          description="Specifies the comparison options for character data."
+                          name="NewComparisonFlags">0</property>
+                        <property
+                          dataType="System.Int32"
+                          description="Specifies the sort order of the column."
+                          name="NewSortKeyPosition">0</property>
+                      </properties>
+                    </inputColumn>
+                    <inputColumn
+                      refId="Package\ETL Dim_Date\REMOVE duplicates.Inputs[Sort Input].Columns[season]"
+                      cachedCodepage="1252"
+                      cachedDataType="str"
+                      cachedLength="10"
+                      cachedName="season"
+                      lineageId="Package\ETL Dim_Date\TRANSFORM Data.Outputs[Derived Column Output].Columns[season]">
+                      <properties>
+                        <property
+                          dataType="System.Int32"
+                          description="Specifies the comparison options for character data."
+                          name="NewComparisonFlags">0</property>
+                        <property
+                          dataType="System.Int32"
+                          description="Specifies the sort order of the column."
+                          name="NewSortKeyPosition">0</property>
+                      </properties>
+                    </inputColumn>
+                  </inputColumns>
+                  <externalMetadataColumns />
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\ETL Dim_Date\REMOVE duplicates.Outputs[Sort Output]"
+                  isSorted="true"
+                  name="Sort Output">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\ETL Dim_Date\REMOVE duplicates.Outputs[Sort Output].Columns[date]"
+                      dataType="wstr"
+                      length="50"
+                      lineageId="Package\ETL Dim_Date\REMOVE duplicates.Outputs[Sort Output].Columns[date]"
+                      name="date">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="Specifies the lineage identifier of the input column that is associated with this output column."
+                          name="SortColumnId">#{Package\ETL Dim_Date\Union All.Outputs[Union All Output 1].Columns[date]}</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\ETL Dim_Date\REMOVE duplicates.Outputs[Sort Output].Columns[Copy of date]"
+                      dataType="dbDate"
+                      lineageId="Package\ETL Dim_Date\REMOVE duplicates.Outputs[Sort Output].Columns[Copy of date]"
+                      name="Copy of date">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="Specifies the lineage identifier of the input column that is associated with this output column."
+                          name="SortColumnId">#{Package\ETL Dim_Date\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of date]}</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\ETL Dim_Date\REMOVE duplicates.Outputs[Sort Output].Columns[date_sid]"
+                      dataType="i4"
+                      lineageId="Package\ETL Dim_Date\REMOVE duplicates.Outputs[Sort Output].Columns[date_sid]"
+                      name="date_sid"
+                      sortKeyPosition="1">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="Specifies the lineage identifier of the input column that is associated with this output column."
+                          name="SortColumnId">#{Package\ETL Dim_Date\TRANSFORM Data.Outputs[Derived Column Output].Columns[date_sid]}</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\ETL Dim_Date\REMOVE duplicates.Outputs[Sort Output].Columns[year]"
+                      dataType="i4"
+                      lineageId="Package\ETL Dim_Date\REMOVE duplicates.Outputs[Sort Output].Columns[year]"
+                      name="year">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="Specifies the lineage identifier of the input column that is associated with this output column."
+                          name="SortColumnId">#{Package\ETL Dim_Date\TRANSFORM Data.Outputs[Derived Column Output].Columns[year]}</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\ETL Dim_Date\REMOVE duplicates.Outputs[Sort Output].Columns[month]"
+                      dataType="i4"
+                      lineageId="Package\ETL Dim_Date\REMOVE duplicates.Outputs[Sort Output].Columns[month]"
+                      name="month">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="Specifies the lineage identifier of the input column that is associated with this output column."
+                          name="SortColumnId">#{Package\ETL Dim_Date\TRANSFORM Data.Outputs[Derived Column Output].Columns[month]}</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\ETL Dim_Date\REMOVE duplicates.Outputs[Sort Output].Columns[day]"
+                      dataType="i4"
+                      lineageId="Package\ETL Dim_Date\REMOVE duplicates.Outputs[Sort Output].Columns[day]"
+                      name="day">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="Specifies the lineage identifier of the input column that is associated with this output column."
+                          name="SortColumnId">#{Package\ETL Dim_Date\TRANSFORM Data.Outputs[Derived Column Output].Columns[day]}</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\ETL Dim_Date\REMOVE duplicates.Outputs[Sort Output].Columns[quarter]"
+                      codePage="1252"
+                      dataType="str"
+                      length="2"
+                      lineageId="Package\ETL Dim_Date\REMOVE duplicates.Outputs[Sort Output].Columns[quarter]"
+                      name="quarter">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="Specifies the lineage identifier of the input column that is associated with this output column."
+                          name="SortColumnId">#{Package\ETL Dim_Date\TRANSFORM Data.Outputs[Derived Column Output].Columns[quarter]}</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\ETL Dim_Date\REMOVE duplicates.Outputs[Sort Output].Columns[season]"
+                      codePage="1252"
+                      dataType="str"
+                      length="10"
+                      lineageId="Package\ETL Dim_Date\REMOVE duplicates.Outputs[Sort Output].Columns[season]"
+                      name="season">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="Specifies the lineage identifier of the input column that is associated with this output column."
+                          name="SortColumnId">#{Package\ETL Dim_Date\TRANSFORM Data.Outputs[Derived Column Output].Columns[season]}</property>
+                      </properties>
+                    </outputColumn>
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\ETL Dim_Date\TRANSFORM Data"
+              componentClassID="Microsoft.DerivedColumn"
+              contactInfo="Derived Column;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;0"
+              description="Creates new column values by applying expressions to transformation input columns. Create new columns or overwrite existing ones. For example, concatenate the values from the 'first name' and 'last name' column to make a 'full name' column."
+              name="TRANSFORM Data"
+              usesDispositions="true">
+              <inputs>
+                <input
+                  refId="Package\ETL Dim_Date\TRANSFORM Data.Inputs[Derived Column Input]"
+                  description="Input to the Derived Column Transformation"
+                  name="Derived Column Input">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\ETL Dim_Date\TRANSFORM Data.Inputs[Derived Column Input].Columns[Copy of date]"
+                      cachedDataType="dbDate"
+                      cachedName="Copy of date"
+                      lineageId="Package\ETL Dim_Date\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of date]" />
+                  </inputColumns>
+                  <externalMetadataColumns />
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\ETL Dim_Date\TRANSFORM Data.Outputs[Derived Column Output]"
+                  description="Default Output of the Derived Column Transformation"
+                  exclusionGroup="1"
+                  name="Derived Column Output"
+                  synchronousInputId="Package\ETL Dim_Date\TRANSFORM Data.Inputs[Derived Column Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\ETL Dim_Date\TRANSFORM Data.Outputs[Derived Column Output].Columns[date_sid]"
+                      dataType="i4"
+                      errorOrTruncationOperation="Computation"
+                      errorRowDisposition="FailComponent"
+                      lineageId="Package\ETL Dim_Date\TRANSFORM Data.Outputs[Derived Column Output].Columns[date_sid]"
+                      name="date_sid"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.String"
+                          description="Derived Column Expression"
+                          name="Expression">10000 * [YEAR](#{Package\ETL Dim_Date\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of date]}) + 100 * [MONTH](#{Package\ETL Dim_Date\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of date]}) + [DAY](#{Package\ETL Dim_Date\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of date]})</property>
+                        <property
+                          containsID="true"
+                          dataType="System.String"
+                          description="Derived Column Friendly Expression"
+                          expressionType="Notify"
+                          name="FriendlyExpression">10000 * YEAR([Copy of date]) + 100 * MONTH([Copy of date]) + DAY([Copy of date])</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\ETL Dim_Date\TRANSFORM Data.Outputs[Derived Column Output].Columns[year]"
+                      dataType="i4"
+                      errorOrTruncationOperation="Computation"
+                      errorRowDisposition="FailComponent"
+                      lineageId="Package\ETL Dim_Date\TRANSFORM Data.Outputs[Derived Column Output].Columns[year]"
+                      name="year"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.String"
+                          description="Derived Column Expression"
+                          name="Expression">[YEAR](#{Package\ETL Dim_Date\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of date]})</property>
+                        <property
+                          containsID="true"
+                          dataType="System.String"
+                          description="Derived Column Friendly Expression"
+                          expressionType="Notify"
+                          name="FriendlyExpression">YEAR([Copy of date])</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\ETL Dim_Date\TRANSFORM Data.Outputs[Derived Column Output].Columns[month]"
+                      dataType="i4"
+                      errorOrTruncationOperation="Computation"
+                      errorRowDisposition="FailComponent"
+                      lineageId="Package\ETL Dim_Date\TRANSFORM Data.Outputs[Derived Column Output].Columns[month]"
+                      name="month"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.String"
+                          description="Derived Column Expression"
+                          name="Expression">[MONTH](#{Package\ETL Dim_Date\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of date]})</property>
+                        <property
+                          containsID="true"
+                          dataType="System.String"
+                          description="Derived Column Friendly Expression"
+                          expressionType="Notify"
+                          name="FriendlyExpression">MONTH([Copy of date])</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\ETL Dim_Date\TRANSFORM Data.Outputs[Derived Column Output].Columns[day]"
+                      dataType="i4"
+                      errorOrTruncationOperation="Computation"
+                      errorRowDisposition="FailComponent"
+                      lineageId="Package\ETL Dim_Date\TRANSFORM Data.Outputs[Derived Column Output].Columns[day]"
+                      name="day"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.String"
+                          description="Derived Column Expression"
+                          name="Expression">[DAY](#{Package\ETL Dim_Date\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of date]})</property>
+                        <property
+                          containsID="true"
+                          dataType="System.String"
+                          description="Derived Column Friendly Expression"
+                          expressionType="Notify"
+                          name="FriendlyExpression">DAY([Copy of date])</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\ETL Dim_Date\TRANSFORM Data.Outputs[Derived Column Output].Columns[quarter]"
+                      codePage="1252"
+                      dataType="str"
+                      errorOrTruncationOperation="Computation"
+                      errorRowDisposition="FailComponent"
+                      length="2"
+                      lineageId="Package\ETL Dim_Date\TRANSFORM Data.Outputs[Derived Column Output].Columns[quarter]"
+                      name="quarter"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.String"
+                          description="Derived Column Expression"
+                          name="Expression">(DT_STR,2,1252)("Q" + (DT_WSTR,1)(([MONTH](#{Package\ETL Dim_Date\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of date]}) - 1) / 3 + 1))</property>
+                        <property
+                          containsID="true"
+                          dataType="System.String"
+                          description="Derived Column Friendly Expression"
+                          expressionType="Notify"
+                          name="FriendlyExpression">(DT_STR,2,1252)("Q" + (DT_WSTR,1)((MONTH([Copy of date]) - 1) / 3 + 1))</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\ETL Dim_Date\TRANSFORM Data.Outputs[Derived Column Output].Columns[season]"
+                      codePage="1252"
+                      dataType="str"
+                      errorOrTruncationOperation="Computation"
+                      errorRowDisposition="FailComponent"
+                      length="10"
+                      lineageId="Package\ETL Dim_Date\TRANSFORM Data.Outputs[Derived Column Output].Columns[season]"
+                      name="season"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.String"
+                          description="Derived Column Expression"
+                          name="Expression">(DT_STR,10,1252)([MONTH](#{Package\ETL Dim_Date\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of date]}) &gt;= 7 ? ((DT_STR,4,1252)[YEAR](#{Package\ETL Dim_Date\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of date]}) + "/" + (DT_STR,4,1252)([YEAR](#{Package\ETL Dim_Date\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of date]}) + 1)) : ((DT_STR,4,1252)([YEAR](#{Package\ETL Dim_Date\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of date]}) - 1) + "/" + (DT_STR,4,1252)[YEAR](#{Package\ETL Dim_Date\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of date]})))</property>
+                        <property
+                          containsID="true"
+                          dataType="System.String"
+                          description="Derived Column Friendly Expression"
+                          expressionType="Notify"
+                          name="FriendlyExpression">(DT_STR,10,1252)(MONTH([Copy of date]) &gt;= 7 ? ((DT_STR,4,1252)YEAR([Copy of date]) + "/" + (DT_STR,4,1252)(YEAR([Copy of date]) + 1)) : ((DT_STR,4,1252)(YEAR([Copy of date]) - 1) + "/" + (DT_STR,4,1252)YEAR([Copy of date])))</property>
+                      </properties>
+                    </outputColumn>
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+                <output
+                  refId="Package\ETL Dim_Date\TRANSFORM Data.Outputs[Derived Column Error Output]"
+                  description="Error Output of the Derived Column Transformation"
+                  exclusionGroup="1"
+                  isErrorOut="true"
+                  name="Derived Column Error Output"
+                  synchronousInputId="Package\ETL Dim_Date\TRANSFORM Data.Inputs[Derived Column Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\ETL Dim_Date\TRANSFORM Data.Outputs[Derived Column Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\ETL Dim_Date\TRANSFORM Data.Outputs[Derived Column Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\ETL Dim_Date\TRANSFORM Data.Outputs[Derived Column Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\ETL Dim_Date\TRANSFORM Data.Outputs[Derived Column Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\ETL Dim_Date\Union All"
+              componentClassID="Microsoft.UnionAll"
+              contactInfo="Union All;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;1"
+              description="Combines rows from multiple data flows without sorting. For example, add rows back to a data flow after correction of errors. If sorting is important, we recommend using the Merge transformation."
+              name="Union All"
+              version="1">
+              <inputs>
+                <input
+                  refId="Package\ETL Dim_Date\Union All.Inputs[Union All Input 1]"
+                  name="Union All Input 1">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\ETL Dim_Date\Union All.Inputs[Union All Input 1].Columns[date]"
+                      cachedDataType="wstr"
+                      cachedLength="50"
+                      cachedName="date"
+                      lineageId="Package\ETL Dim_Date\READ table Appearances.Outputs[OLE DB Source Output].Columns[date]">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="Output column lineage ID"
+                          name="OutputColumnLineageID">#{Package\ETL Dim_Date\Union All.Outputs[Union All Output 1].Columns[date]}</property>
+                      </properties>
+                    </inputColumn>
+                  </inputColumns>
+                  <externalMetadataColumns />
+                </input>
+                <input
+                  refId="Package\ETL Dim_Date\Union All.Inputs[Union All Input 2]"
+                  hasSideEffects="true"
+                  name="Union All Input 2">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\ETL Dim_Date\Union All.Inputs[Union All Input 2].Columns[date]"
+                      cachedDataType="wstr"
+                      cachedLength="50"
+                      cachedName="date"
+                      lineageId="Package\ETL Dim_Date\READ table player_valuations.Outputs[OLE DB Source Output].Columns[date]">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="Output column lineage ID"
+                          name="OutputColumnLineageID">#{Package\ETL Dim_Date\Union All.Outputs[Union All Output 1].Columns[date]}</property>
+                      </properties>
+                    </inputColumn>
+                  </inputColumns>
+                  <externalMetadataColumns />
+                </input>
+                <input
+                  refId="Package\ETL Dim_Date\Union All.Inputs[Union All Input 3]"
+                  dangling="true"
+                  hasSideEffects="true"
+                  name="Union All Input 3">
+                  <externalMetadataColumns />
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\ETL Dim_Date\Union All.Outputs[Union All Output 1]"
+                  name="Union All Output 1">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\ETL Dim_Date\Union All.Outputs[Union All Output 1].Columns[date]"
+                      dataType="wstr"
+                      length="50"
+                      lineageId="Package\ETL Dim_Date\Union All.Outputs[Union All Output 1].Columns[date]"
+                      name="date" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+          </components>
+          <paths>
+            <path
+              refId="Package\ETL Dim_Date.Paths[Data Conversion Output]"
+              endId="Package\ETL Dim_Date\TRANSFORM Data.Inputs[Derived Column Input]"
+              name="Data Conversion Output"
+              startId="Package\ETL Dim_Date\Data Conversion.Outputs[Data Conversion Output]" />
+            <path
+              refId="Package\ETL Dim_Date.Paths[Derived Column Output]"
+              endId="Package\ETL Dim_Date\REMOVE duplicates.Inputs[Sort Input]"
+              name="Derived Column Output"
+              startId="Package\ETL Dim_Date\TRANSFORM Data.Outputs[Derived Column Output]" />
+            <path
+              refId="Package\ETL Dim_Date.Paths[OLE DB Source Output]"
+              endId="Package\ETL Dim_Date\Union All.Inputs[Union All Input 1]"
+              name="OLE DB Source Output"
+              startId="Package\ETL Dim_Date\READ table Appearances.Outputs[OLE DB Source Output]" />
+            <path
+              refId="Package\ETL Dim_Date.Paths[OLE DB Source Output1]"
+              endId="Package\ETL Dim_Date\Union All.Inputs[Union All Input 2]"
+              name="OLE DB Source Output"
+              startId="Package\ETL Dim_Date\READ table player_valuations.Outputs[OLE DB Source Output]" />
+            <path
+              refId="Package\ETL Dim_Date.Paths[Sort Output]"
+              endId="Package\ETL Dim_Date\LOAD Data for Dim_Date.Inputs[OLE DB Destination Input]"
+              name="Sort Output"
+              startId="Package\ETL Dim_Date\REMOVE duplicates.Outputs[Sort Output]" />
+            <path
+              refId="Package\ETL Dim_Date.Paths[Union All Output 1]"
+              endId="Package\ETL Dim_Date\Data Conversion.Inputs[Data Conversion Input]"
+              name="Union All Output 1"
+              startId="Package\ETL Dim_Date\Union All.Outputs[Union All Output 1]" />
+          </paths>
+        </pipeline>
+      </DTS:ObjectData>
+    </DTS:Executable>
+  </DTS:Executables>
+  <DTS:PrecedenceConstraints>
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint]"
+      DTS:CreationName=""
+      DTS:DTSID="{6F6AB91E-E9F4-49CB-8C79-8E8C57490AE0}"
+      DTS:From="Package\DROP and CREATE Dim_Date"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint"
+      DTS:To="Package\ETL Dim_Date" />
+  </DTS:PrecedenceConstraints>
+  <DTS:DesignTimeProperties><![CDATA[<?xml version="1.0"?>
+<!--This CDATA section contains the layout information of the package. The section includes information such as (x,y) coordinates, width, and height.-->
+<!--If you manually edit this section and make a mistake, you can delete it. -->
+<!--The package will still be able to load normally but the previous layout information will be lost and the designer will automatically re-arrange the elements on the design surface.-->
+<Objects
+  Version="8">
+  <!--Each node below will contain properties that do not affect runtime behavior.-->
+  <Package
+    design-time-name="Package">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
+        <NodeLayout
+          Size="222.4,41.6"
+          Id="Package\DROP and CREATE Dim_Date"
+          TopLeft="91.6666616582211,60.6666662447982" />
+        <NodeLayout
+          Size="146.4,41.6"
+          Id="Package\ETL Dim_Date"
+          TopLeft="126.666659745905,149.066665630076" />
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint]"
+          TopLeft="201.366660702063,102.266666244798">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,46.7999993852775"
+              Start="0,0"
+              End="0,39.2999993852775">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,39.2999993852775" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+      </GraphLayout>
+    </LayoutInfo>
+  </Package>
+  <TaskHost
+    design-time-name="Package\ETL Dim_Date">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="16" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
+        <NodeLayout
+          Size="196.8,41.6"
+          Id="Package\ETL Dim_Date\READ table Appearances"
+          TopLeft="113.999998301268,60.9999990910292" />
+        <NodeLayout
+          Size="216.8,41.6"
+          Id="Package\ETL Dim_Date\READ table player_valuations"
+          TopLeft="557.999991685152,57.9999991357327" />
+        <NodeLayout
+          Size="120,41.6"
+          Id="Package\ETL Dim_Date\Union All"
+          TopLeft="365.999994546175,129.999998062849" />
+        <EdgeLayout
+          Id="Package\ETL Dim_Date.Paths[OLE DB Source Output]"
+          TopLeft="212.399998301268,102.599999091029">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="194.93332957824,27.3999989718198"
+              Start="0,0"
+              End="194.93332957824,19.8999989718198">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,12.2236836017354" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,12.2236836017354"
+                    Point2="0,16.2236836017354"
+                    Point3="4,16.2236836017354" />
+                  <mssgle:LineSegment
+                    End="190.93332957824,16.2236836017354" />
+                  <mssgle:CubicBezierSegment
+                    Point1="190.93332957824,16.2236836017354"
+                    Point2="194.93332957824,16.2236836017354"
+                    Point3="194.93332957824,20.2236836017354" />
+                  <mssgle:LineSegment
+                    End="194.93332957824,19.8999989718198" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\ETL Dim_Date.Paths[OLE DB Source Output1]"
+          TopLeft="666.399991685152,99.5999991357327">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="-221.733330472311,30.3999989271163"
+              Start="0,0"
+              End="-221.733330472311,22.8999989271163">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,13.9999993647399" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,13.9999993647399"
+                    Point2="0,17.9999993647399"
+                    Point3="-4,17.9999993647399" />
+                  <mssgle:LineSegment
+                    End="-217.733330472311,17.9999993647399" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-217.733330472311,17.9999993647399"
+                    Point2="-221.733330472311,17.9999993647399"
+                    Point3="-221.733330472311,21.9999993647399" />
+                  <mssgle:LineSegment
+                    End="-221.733330472311,22.8999989271163" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <NodeLayout
+          Size="156,41.6"
+          Id="Package\ETL Dim_Date\Data Conversion"
+          TopLeft="345.999994844198,196.999997064471" />
+        <EdgeLayout
+          Id="Package\ETL Dim_Date.Paths[Union All Output 1]"
+          TopLeft="424.999994695187,171.599998062849">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,25.3999990016223"
+              Start="0,0"
+              End="0,17.8999990016223">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,17.8999990016223" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <NodeLayout
+          Size="168.8,41.6"
+          Id="Package\ETL Dim_Date\TRANSFORM Data"
+          TopLeft="113.999998301268,273.999995917082" />
+        <EdgeLayout
+          Id="Package\ETL Dim_Date.Paths[Data Conversion Output]"
+          TopLeft="423.999994844198,238.599997064471">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="-225.599996542931,35.3999988526105"
+              Start="0,0"
+              End="-225.599996542931,27.8999988526105">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,13.6999994263053" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,13.6999994263053"
+                    Point2="0,17.6999994263053"
+                    Point3="-4,17.6999994263053" />
+                  <mssgle:LineSegment
+                    End="-221.599996542931,17.6999994263053" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-221.599996542931,17.6999994263053"
+                    Point2="-225.599996542931,17.6999994263053"
+                    Point3="-225.599996542931,21.6999994263053" />
+                  <mssgle:LineSegment
+                    End="-225.599996542931,27.8999988526105" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <NodeLayout
+          Size="172.8,41.6"
+          Id="Package\ETL Dim_Date\REMOVE duplicates"
+          TopLeft="377.999994367361,290.999995663762" />
+        <EdgeLayout
+          Id="Package\ETL Dim_Date.Paths[Derived Column Output]"
+          TopLeft="282.799998301268,294.799995917082">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="95.1999960660935,16.9999997466804"
+              Start="0,0"
+              End="87.6999960660935,16.9999997466804">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="43.5999980330467,0" />
+                  <mssgle:CubicBezierSegment
+                    Point1="43.5999980330467,0"
+                    Point2="47.5999980330467,0"
+                    Point3="47.5999980330467,4" />
+                  <mssgle:LineSegment
+                    End="47.5999980330467,12.9999997466804" />
+                  <mssgle:CubicBezierSegment
+                    Point1="47.5999980330467,12.9999997466804"
+                    Point2="47.5999980330467,16.9999997466804"
+                    Point3="51.5999980330467,16.9999997466804" />
+                  <mssgle:LineSegment
+                    End="87.6999960660935,16.9999997466804" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <NodeLayout
+          Size="195.2,41.6"
+          Id="Package\ETL Dim_Date\LOAD Data for Dim_Date"
+          TopLeft="703.999989509583,281.199995917082" />
+        <EdgeLayout
+          Id="Package\ETL Dim_Date.Paths[Sort Output]"
+          TopLeft="550.799994367361,311.799995663762">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="153.199995142222,-9.79999974668027"
+              Start="0,0"
+              End="145.699995142222,-9.79999974668027">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="72.5999975711109,0" />
+                  <mssgle:CubicBezierSegment
+                    Point1="72.5999975711109,0"
+                    Point2="76.5999975711109,0"
+                    Point3="76.5999975711109,-4" />
+                  <mssgle:LineSegment
+                    End="76.5999975711109,-5.79999974668027" />
+                  <mssgle:CubicBezierSegment
+                    Point1="76.5999975711109,-5.79999974668027"
+                    Point2="76.5999975711109,-9.79999974668027"
+                    Point3="80.5999975711109,-9.79999974668027" />
+                  <mssgle:LineSegment
+                    End="145.699995142222,-9.79999974668027" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+      </GraphLayout>
+    </LayoutInfo>
+  </TaskHost>
+  <PipelineComponentMetadata
+    design-time-name="Package\ETL Dim_Date\READ table Appearances">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+      <Property>
+        <Name>TableInfoObjectType</Name>
+        <Value
+          type="q2:string">Table</Value>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <PipelineComponentMetadata
+    design-time-name="Package\ETL Dim_Date\READ table player_valuations">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+      <Property>
+        <Name>TableInfoObjectType</Name>
+        <Value
+          type="q2:string">Table</Value>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <PipelineComponentMetadata
+    design-time-name="Package\ETL Dim_Date\LOAD Data for Dim_Date">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+      <Property>
+        <Name>TableInfoObjectType</Name>
+        <Value
+          type="q2:string">Table</Value>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+</Objects>]]></DTS:DesignTimeProperties>
+</DTS:Executable>
